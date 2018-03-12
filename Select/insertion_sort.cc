@@ -4,7 +4,7 @@
 #include <ctime>
 
 #define SELECT_SIZE 5
-
+#define MAX_PRINT   50
 
 
 //
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
   int res = Select(A-1, index, 1, size);
 
   #ifdef DEBUG
-  for(i=0; i<size && i<=20; i++)
+  for(i=0; i<size && i<=MAX_PRINT; i++)
     std::cout << A[i] << " ";
 
   std::cout << std::endl;
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
   Insertion_Sort(A-1, 1, size);
 
 #ifdef DEBUG
-  for(i=0; i<size && i<=20; i++)
+  for(i=0; i<size && i<=MAX_PRINT; i++)
     std::cout << A[i] << " ";
 
   std::cout << std::endl;
@@ -137,7 +137,7 @@ void Insertion_Sort(T* A, int begin, int end){
     std::cout << "####################################################" << std::endl;
     std::cout << "Insertion_Sort: begin: " << begin << "  end: " << end << std::endl;
     std::cout << "Insertion_Sort: the vector BEFORE" << std::endl;
-    for(i=0; i<end-begin+1 && i<20; i++)
+    for(i=0; i<end-begin+1 && i<MAX_PRINT; i++)
       std::cout << A[i+begin] << " ";
     std::cout << std::endl;
   #endif
@@ -154,7 +154,7 @@ void Insertion_Sort(T* A, int begin, int end){
 
   #ifdef DEBUG
     std::cout << "Insertion_Sort: the vector AFTER" << std::endl;
-    for(i=0; i<end-begin+1 && i<20; i++)
+    for(i=0; i<end-begin+1 && i<MAX_PRINT; i++)
       std::cout << A[i+begin] << " ";
 
     std::cout << std::endl;
@@ -190,7 +190,7 @@ T Select_Pivot(T* A, int begin, int end){
     int cbegin = begin + 5*i;
     if( cbegin+4 > end ){
       Insertion_Sort(A, cbegin, end);
-      Medians[i] = A[(end-cbegin)/2];
+      Medians[i] = A[ cbegin + (end-cbegin)/2 ];
     }
     else{
       Insertion_Sort(A, cbegin, cbegin+4);
@@ -201,7 +201,7 @@ T Select_Pivot(T* A, int begin, int end){
 
   #ifdef DEBUG
   std::cout << "Medians:" << std::endl;
-    for(int i=0; i<blocks_num && i<=20; i++)
+    for(int i=0; i<blocks_num && i<=MAX_PRINT; i++)
       std::cout << Medians[i] << " ";
     std::cout << std::endl;      
   #endif
@@ -230,13 +230,14 @@ T Select_Pivot(T* A, int begin, int end){
 template<typename T>
 Partition Select_Partition(T* A, int begin, int end, T pivot){
   T k = pivot;
-  int i;
+
   #ifdef DEBUG
-    std::cout << "####################################################" << std::endl;
+  int i;
+  std::cout << "####################################################" << std::endl;
     std::cout << "Select_Partition: begin: " << begin << " end: " << end << std::endl;
     std::cout << "Select_Partition: pivo: " << k << std::endl;
     std::cout << "Select_Partition: the vector BEFORE" << std::endl;
-    for(i=0; i<end-begin+1 && i<=20; i++)
+    for(i=0; i<end-begin+1 && i<=MAX_PRINT; i++)
       std::cout << A[i+begin] << " ";
     std::cout << std::endl;
 #endif
@@ -261,7 +262,7 @@ Partition Select_Partition(T* A, int begin, int end, T pivot){
     #ifdef DEBUG
       std::cout << "Select_Partition: p: " << p << std::endl;
     std::cout << "Select_Partition: the vector AFTER FIRST CYCLE" << std::endl;
-    for(i=0; i<end-begin+1 && i<=20; i++)
+    for(i=0; i<end-begin+1 && i<=MAX_PRINT; i++)
       std::cout << i+1 << "\t";
     std::cout << std::endl;
     for(i=0; i<end-begin+1 && i<=20; i++)
@@ -284,7 +285,7 @@ Partition Select_Partition(T* A, int begin, int end, T pivot){
     p.k2--;
   #ifdef DEBUG
     std::cout << "Select_Partition: the vector AFTER" << std::endl;
-    for(i=0; i<end-begin+1 && i<=20; i++)
+    for(i=0; i<end-begin+1 && i<=MAX_PRINT; i++)
       std::cout << A[i+begin] << "\t";
     std::cout << std::endl;
     std::cout << "Select_Partition: returning: " << p << std::endl;
