@@ -1,7 +1,5 @@
 #include <iostream>
-#include <vector>
-#include <cstdlib>  // rand()
-#include <ctime>
+#include <cstdlib>
 
 #define SELECT_SIZE 5
 #define MAX_PRINT   50
@@ -120,6 +118,8 @@ std::cout << "Main: A[" << index << "] = " << A[index-1] << std::endl;
 #endif
 
  std::cout << res << "\t" << A[index-1] << std::endl;
+
+ delete[] A;
  
   return 0;
 }
