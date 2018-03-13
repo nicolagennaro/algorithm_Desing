@@ -177,7 +177,10 @@ void Strassen(T* A, T* B, T* C, int size){
      delete[] P5;
      delete[] P6;
      delete[] P7;
-     
+     delete[] A11;
+     delete[] A22;
+     delete[] B11;
+     delete[] B22;
 } // strassen
 
 
@@ -270,6 +273,9 @@ int main(int argc, char* argv[]){
       print_mat(CC,size);
 
       Strassen(A,B,C,size);
+
+      std::cout << "Result of Strassen" << std::endl;
+      print_mat(C, size);
       
       delete[] A;
       delete[] B;
