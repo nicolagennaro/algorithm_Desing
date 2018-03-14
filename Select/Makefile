@@ -1,7 +1,7 @@
 CXX = c++
-EXE = insertion_sort
+EXE = select
 CFLAGS = -std=c++11 -Wall -Wextra
-DFLAGS = -D DEBUG
+#DFLAGS = -D DEBUG
 
 all: $(EXE)
 

@@ -3,25 +3,6 @@
 
 
 
-int pow_two(int n){
-  int res = 1;
-  while(n--)
-    res *= 2;
-
-  return res;
-}
-
-int next_pow_two(int size){
-  int candidate = 0;
-  int i = 0;
-  while( candidate < size )
-    candidate = pow_two(i++);
-
-return candidate;      
-}
-
-
-
 template<typename T>
 void print_mat(T* A, int size){
   int i,j;
@@ -160,70 +141,6 @@ void Strassen(T* A, T* B, T* C, int size_in){
       }
 
 
-
-
-      // 	for(i=0; i<h_size; i++){
-      // 	if(i>=size_in/2){
-      // 	  for(j=0; j<h_size; j++){
-      // 	    if(j>=size_in/2){
-      // 	      // i, j > size_in/2
-      // 	    A11[ i*h_size + j ] = A[ i*size_in + j];
-      // 	    B11[ i*h_size + j ] = B[ i*size_in + j];
-      // 	    A12[ i*h_size + j ] = 0.0; // A[ i*size_in + j + h_size ];
-      // 	    B12[ i*h_size + j ] = 0.0;
-      // 	    A21[ i*h_size + j ] = 0.0;
-      // 	    A22[ i*h_size + j ] = 0.0;
-      // 	    B21[ i*h_size + j ] = 0.0;
-      // 	    B22[ i*h_size + j ] = 0.0;
-      // 	    }
-      // 	    else{ // i> size_in/2
-	      
-      // 	    A11[ i*h_size + j ] = A[ i*size_in + j];
-      // 	    B11[ i*h_size + j ] = B[ i*size_in + j];
-	    
-      // 	    A12[ i*h_size + j ] = A[ i*size_in + j + h_size ];
-      // 	    B12[ i*h_size + j ] = B[ i*size_in + j + h_size ];
-
-      // 	    A21[ i*h_size + j ] = 0.0;
-      // 	    A22[ i*h_size + j ] = 0.0;
-      // 	    B21[ i*h_size + j ] = 0.0;
-      // 	    B22[ i*h_size + j ] = 0.0;
-
-      // 	    }
-      // 	    }// j
-      // 	}// if i> size_in/2
-      // 	else{ // i< h_size
-      // 	  for(j=0; j<h_size; j++){
-      // 	    if(j>=size_in/2){
-      // 	      // j > size_in/2
-      // 	    A11[ i*h_size + j ] = A[ i*size_in + j];
-      // 	    B11[ i*h_size + j ] = B[ i*size_in + j];
-
-      // 	    A12[ i*h_size + j ] = 0.0; // A[ i*size_in + j + h_size ];
-      // 	    B12[ i*h_size + j ] = 0.0;
-
-      // 	    A21[ i*h_size + j ] = A[ (i+h_size)*size + j];
-      // 	    A22[ i*h_size + j ] = 0.0;
-      // 	    B21[ i*h_size + j ] = B[ (i+h_size)*size + j];
-      // 	    B22[ i*h_size + j ] = 0.0;
-      // 	    }
-      // 	    else{ // j<= size_in/2
-	      
-      // 	    A11[ i*h_size + j ] = A[ i*size_in + j];
-      // 	    B11[ i*h_size + j ] = B[ i*size_in + j];
-      // 	    A12[ i*h_size + j ] = A[ i*size_in + j + h_size ];
-      // 	    B12[ i*h_size + j ] = B[ i*size_in + j + h_size ];
-      // 	    A21[ i*h_size + j ] = A[ (i+h_size)*size_in + j ];
-      // 	    A22[ i*h_size + j ] = A[(i+h_size)*size_in + j + h_size];
-      // 	    B21[ i*h_size + j ] = B[(i+h_size)*size_in + j];
-      // 	    B22[ i*h_size + j ] = B[(i+h_size)*size_in + j + h_size];
-
-      // 	    }
-      // 	    }// j
-
-      // 	}// else
-      // } // for i
-
 #ifdef DEBUG
   std::cout << "A11" << std::endl;
   print_mat(A11, h_size);
@@ -307,21 +224,48 @@ void Strassen(T* A, T* B, T* C, int size_in){
 
   T *P1, *P2, *P3, *P4, *P5, *P6, *P7;
   P1 = new T[h_size*h_size];
-  P2 = new T[h_size*h_size];
- P3 = new T[h_size*h_size];
- P4 = new T[h_size*h_size];
- P5 = new T[h_size*h_size];
- P6 = new T[h_size*h_size];
- P7 = new T[h_size*h_size];
 
 
  Strassen(A11, S1, P1, h_size);
+ 
+ delete[] A11;
+ delete[] S1;
+ P2 = new T[h_size*h_size];
+
  Strassen(S2, B22, P2, h_size);
+ 
+ delete[] S2;
+ delete[] B22;
+ P3 = new T[h_size*h_size];
+
  Strassen(S3, B11, P3, h_size);
+
+ delete[] S3;
+ delete[] B11;
+ P4 = new T[h_size*h_size];
+
  Strassen(A22, S4, P4, h_size);
+
+ delete[] A22;
+ delete[] S4;
+ P5 = new T[h_size*h_size];
+
  Strassen(S5, S6, P5, h_size);
+
+ delete[] S5;
+ delete[] S6;
+ P6 = new T[h_size*h_size];
+
  Strassen(S7, S8, P6, h_size);
+
+ delete[] S7;
+ delete[] S8;
+ P7 = new T[h_size*h_size];
+
  Strassen(S9, S10, P7 ,h_size);
+
+ delete[] S9;
+ delete[] S10;
 
  
   #ifdef DEBUG
@@ -340,24 +284,7 @@ void Strassen(T* A, T* B, T* C, int size_in){
   std::cout << "P7:" << std::endl;
   print_mat(P7, h_size);
 #endif
-
  
-// free A11, A22, B11, B22
- delete[] A11;
- delete[] A22;
- delete[] B11;
- delete[] B22;
- 
-     delete[] S1;
-     delete[] S2;
-     delete[] S3;
-     delete[] S4;
-     delete[] S5;
-     delete[] S6;
-     delete[] S7;
-     delete[] S8;
-     delete[] S9;
-     delete[] S10;
 
  for(i=0; i<h_size; i++){
    for(j=0; j<h_size; j++){
@@ -382,6 +309,7 @@ void Strassen(T* A, T* B, T* C, int size_in){
      delete[] P5;
      delete[] P6;
      delete[] P7;
+
 } // strassen
 
 
@@ -412,6 +340,7 @@ int main(int argc, char* argv[]){
     #ifdef DEBUG
       std::cout  << "Randomly allocating the matrices" << std::endl;
     #endif
+
       int i, j;
 
       for(i = 0; i<size; i++){
@@ -423,55 +352,20 @@ int main(int argc, char* argv[]){
 	}
       }
 
-      // for(i = 0; i<size; i++){
-      // 	if(i>=size){
-      // 	  for(j=0; j<size; j++){
-      // 	    A[i*size + j] = 0;
-      // 	    B[i*size + j] = 0;
-      // 	    C[i*size + j] = 0;
-      // 	    CC[i*size + j] = 0;
-      // 	  }
-      // 	}
-      // 	else{
-      // 	  for( j=0; j<size; j++){
-      // 	    if(j>=inserted_size){
-      // 	    A[i*size + j] = 0;
-      // 	    B[i*size + j] = 0;
-      // 	    C[i*size + j] = 0;
-      // 	    CC[i*size + j] = 0;
-      // 	    }
-      // 	    else{
-      // 	    A[i*size + j] = rand() % (10*size);
-      // 	    B[i*size + j] = rand() % (10*size);
-      // 	    C[i*size + j] = 0;
-      // 	    CC[i*size + j] = 0;
-      // 	    }
-      // 	  }
-      // 	}
-      // }  
-
-      std::cout << "Matrix A" << std::endl;
+      std::cout << "Matrix A\n" << std::endl;
       print_mat(A, size);
 
-      std::cout << "Matrix B" << std::endl;
+      std::cout << "Matrix B\n" << std::endl;
       print_mat(B, size);
       
-      std::cout << "Matrix C" << std::endl;
-      print_mat(C, size);
-      
-      std::cout << "Matrix CC" << std::endl;
-      print_mat(CC, size);
-
-      
-
       Strassen(A,B,C,size);
 
-      std::cout << "Result of Strassen" << std::endl;
+      std::cout << "\nResult of Strassen\n" << std::endl;
       print_mat(C, size);
 
       naive_mat_mult(A,B,CC,size);
 
-      std::cout << "Result of naive_mat_mult" << std::endl;
+      std::cout << "\nResult of naive_mat_mult\n" << std::endl;
 
       print_mat(CC,size);
 
