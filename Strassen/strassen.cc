@@ -141,7 +141,7 @@ void Strassen(T* A, T* B, T* C, int size_in){
       }
 
 
-#ifdef DEBUG
+#ifdef DEBUG1
   std::cout << "A11" << std::endl;
   print_mat(A11, h_size);
   std::cout << "B11" << std::endl;
@@ -199,7 +199,7 @@ void Strassen(T* A, T* B, T* C, int size_in){
   delete[] B12;
   delete[] B21;
   
-  #ifdef DEBUG
+  #ifdef DEBUG1
   std::cout << "S1 = B12 - B22:" << std::endl;
   print_mat(S1, h_size);
   std::cout << "S2 = A11 + A12" << std::endl;
@@ -245,9 +245,9 @@ void Strassen(T* A, T* B, T* C, int size_in){
  P4 = new T[h_size*h_size];
 
  Strassen(A22, S4, P4, h_size);
-
- delete[] A22;
+ 
  delete[] S4;
+ delete[] A22;
  P5 = new T[h_size*h_size];
 
  Strassen(S5, S6, P5, h_size);
@@ -296,9 +296,8 @@ void Strassen(T* A, T* B, T* C, int size_in){
      if( i + h_size < size_in )
        C[ (i+h_size)*size_in + j] = P3[i*h_size + j] + P4[i*h_size + j]; // C21
 
-     if( i + h_size < size_in && j + h_size <= size_in )
+     if( i + h_size < size_in && j + h_size < size_in )
        C[ (i+h_size)*size_in + j + h_size ] = P5[i*h_size + j] + P1[i*h_size + j] - P3[i*h_size + j] - P7[i*h_size + j];// C22
-
    }
  }
 
@@ -345,8 +344,8 @@ int main(int argc, char* argv[]){
 
       for(i = 0; i<size; i++){
         for(j=0; j<size; j++){
-	  A[i*size + j] = rand() %(10*size);
-	  B[i*size + j] = rand() %(10*size);
+	  A[i*size + j] = rand() %(3*size);
+	  B[i*size + j] = rand() %(3*size);
        	    C[i*size + j] = 0;
        	    CC[i*size + j] = 0;
 	}
@@ -375,5 +374,37 @@ int main(int argc, char* argv[]){
       delete[] C;
       delete[] CC;
 
+
+ /*     double *D1, *D2, *DS, *DD;
+      D1 = new double[size*size];
+      D2 = new double[size*size];
+      DS = new double[size*size];
+      DD = new double[size*size];
+
+      for(i = 0; i<size; i++){
+        for(j=0; j<size; j++){
+	  D1[i*size + j] = double(rand())/RAND_MAX;
+	  D2[i*size + j] = double(rand())/RAND_MAX;
+       	  DS[i*size + j] = 0.0;
+       	  DD[i*size + j] = 0.0;
+	}
+      }
+
+      std::cout << "D1" << std::endl; 
+      print_mat(D1,size);
+
+      Strassen(D1,D2,DS,size);
+
+      std::cout << "\nResult of Strassen\n" << std::endl;
+      print_mat(DS, size);
+
+      naive_mat_mult(D1,D2,DD,size);
+
+      std::cout << "\nResult of naive_mat_mult\n" << std::endl;
+
+      print_mat(DD,size);
+*/
+
+      
       return 0;
 }

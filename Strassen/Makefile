@@ -1,7 +1,7 @@
 CXX = c++
 EXE = strassen
 CFLAGS = -std=c++11 -Wall -Wextra
-#DFLAGS = -D DEBUG
+DFLAGS = -D DEBUG
 
 all: $(EXE)
 
