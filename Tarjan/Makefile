@@ -1,9 +1,7 @@
 CXX = c++
-EXE = strassen_less_mem
+EXE = tarjan
 CFLAGS = -std=c++11 -Wall -Wextra
-#DFLAGS = -D DEBUG_C -D DEBUG_P -D DEBUG_FILL
-#DFLAGS = -D DEBUG_S
-#DFLAGS = -D DEBUG_FILL
+DFLAGS = -D DEBUG
 all: $(EXE)
 
 $(EXE): $(EXE).cc
