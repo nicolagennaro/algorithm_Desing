@@ -8,33 +8,13 @@
 #define __GRAPH__
 
 
+class Graph;
+
+
 class Graph{
 	enum class color {white, grey, black};
 
-	class Node;
-
-	std::vector<Node> nodes;
-        std::vector<std::vector<Node>> SCCs;
-
-        public:
-		Graph() { this->insert(); }
-		// Graph(std::vector<Node> &v): nodes{v} {}
-		
-		void print();
-		void insert();
-
-		void dfs();
-		void bfs(int);
-		void Tarjan_SCC();
-		
-		void Dijkstra(int);
-		
-  		// void set_SCC(){ SCCs = this->Tarjan_SCC(); }
-  		void print_SCC();
-};
-
-
-class Graph::Node{
+	class Node{
 			int name;
 			color col;
 			int discovery_time;
@@ -104,9 +84,29 @@ class Graph::Node{
 	  		bool operator==(const Node& other){ return this->name == other.name; }
 	  		bool operator!=(const Node& other){ return !(*this == other); }
 
-			friend void Graph::bfs(int); // bfs must use adj[]
- };
+			friend void Graph::bfs(int);
+	};
 
+
+	std::vector<Node> nodes;
+        std::vector<std::vector<Node>> SCCs;
+
+        public:
+		Graph() { this->insert(); }
+		// Graph(std::vector<Node> &v): nodes{v} {}
+		
+		void print();
+		void insert();
+
+		void dfs();
+		void bfs(int);
+		void Tarjan_SCC();
+		
+		void Dijkstra(int);
+		
+  		// void set_SCC(){ SCCs = this->Tarjan_SCC(); }
+  		void print_SCC();
+};
 
 
 
@@ -129,8 +129,6 @@ void Graph::bfs(int start=0){
 
   std::cout << "##########################################" << std::endl;
   std::cout << "Graph::BFS" << std::endl;  
-  std::cout << "##########################################" << std::endl;
-  
   for(unsigned int i=0; i<nodes.size(); i++){
     nodes[i].set_col(color::white);
     nodes[i].set_distance(INFINITY);
@@ -144,25 +142,16 @@ void Graph::bfs(int start=0){
   Q.push( &nodes[start] );
 
   while( !Q.empty() ){
-    /* Graph::Node *curr = Q.front(); */
-    /* for( unsigned int i=0; i < curr->adj.size(); i++ ){ */
-    /*   if( curr->adj[i]->get_col() == color::white ){ */
-    /* 	curr->adj[i]->set_distance(curr->get_distance() + 1); */
-    /* 	curr->adj[i]->set_parent(curr); */
-    /* 	curr->adj[i]->set_col(color::grey); */
-    /* 	Q.push(curr->adj[i]); */
-    /*   } */
-    /* } */
-    for( Graph::Node *w : Q.front()->adj ){
-      if( w->get_col() == color::white ){
-	w->set_distance( Q.front()->get_distance() + 1 );
-	w->set_parent( Q.front() );
-	w->set_col(color::grey);
-	Q.push( w );
+    Graph::Node *curr = Q.front();
+    for( unsigned int i=0; i < curr->adj.size(); i++ ){
+      if( curr->adj[i]->get_col() == color::white ){
+	curr->adj[i]->set_distance(curr->get_distance + 1);
+	curr->adj[i]->set_parent(curr);
+	curr->adj[i]->set_col(color::grey);
+	Q.push(curr->adj[i]);
       }
     }
-    
-    Q.front()->set_col(color::black);
+    curr->set_col(color::black);
     Q.pop();
   }
 
@@ -171,10 +160,7 @@ void Graph::bfs(int start=0){
   for(unsigned int i=0; i<nodes.size(); i++){
     std::cout << "Node: " << nodes[i].get_name() << std::endl;
     std::cout << "Distance: " << nodes[i].get_distance() << std::endl;
-    if( nodes[i].get_parent() != NULL)
-      std::cout << "Parent:     " << nodes[i].get_parent()->get_name() << std::endl;
-    else
-      std::cout << "No Parent" << std::endl;
+    std::cout << "Parent:     " << nodes[i].get_parent()->get_name() << std::endl;
   }
   std::cout << "##########################################" << std::endl;
   

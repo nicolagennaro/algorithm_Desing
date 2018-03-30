@@ -10,9 +10,12 @@ int main(){
   Graph g;
   g.print();
 
-  g.Tarjan_SCC();
-  g.print_SCC();
+  // g.Tarjan_SCC();
+  // g.print_SCC();
   
 
+  // g.dfs();
+
+  g.bfs();
   return 0;
 }
