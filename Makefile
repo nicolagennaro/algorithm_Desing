@@ -1,15 +1,19 @@
 CXX = c++
-EXE = dijkstra
+EXE = Dijkstra/dijkstra
 CFLAGS = -std=c++11 -Wall -Wextra
 #DFLAGS = -D DEBUG
-IFLAGS = -I ../Heap -I ../Graph
+IFLAGS = -I ./Heap -I ./Graph
 all: $(EXE)
 
 $(EXE): $(EXE).cc
 	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
 
 
+run:
+	./Dijkstra/dijkstra
+
+
 clean:
-	@rm *~ $(EXE)
+	@rm *~
 
 .PHONY: clean

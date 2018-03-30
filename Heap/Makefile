@@ -1,5 +1,5 @@
 CXX = c++
-EXE = main
+EXE = heap
 CFLAGS = -std=c++11 -Wall -Wextra
 DFLAGS = -D DEBUG
 IFLAGS = -I . 

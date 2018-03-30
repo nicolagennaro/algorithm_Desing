@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gedit Graph/Graph.h &
+gedit Dijkstra/dijkstra.cc &

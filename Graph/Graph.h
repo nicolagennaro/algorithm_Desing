@@ -96,26 +96,54 @@ class Graph::Node{
 			void set_ll(int l){ low_link = l; }
 			int get_ll(){ return low_link; }
 			
-	                int Tarjan_SCC(int, std::stack<Graph::Node>&, std::vector<std::vector<Graph::Node>>&);
-			int dfs(int);
-	                // void Dijkstra();
 	                void set_distance(double d){ distance =d; };
 	                double get_distance(){ return distance; }
 	                
 	                void set_parent(Node *p){ parent = p;}
 	                Node* get_parent(){ return parent; }
 	                
-	  
-	  		bool operator==(const Node& other){ return this->name == other.name; }
+	                bool operator==(const Node& other){ return this->name == other.name; }
 	  		bool operator!=(const Node& other){ return !(*this == other); }
+	                
+	                
+	                
+	                friend void Graph::bfs(int); // bfs must use adj[]
+			
+			int dfs(int);
+			
+			
+	                int Tarjan_SCC(int, std::stack<Graph::Node>&, std::vector<std::vector<Graph::Node>>&);
+			
+			friend Graph Graph::collapse();
+	                	  
+	  		
 
-			friend void Graph::bfs(int); // bfs must use adj[]
+			
+			
  };
 
 
 
 class Graph Graph::collapse(){
   
+  // for all nodes in the SCC, temp adj for SCC compute adj to nodes outside
+  // if the edge not present add it to the vector of the adj of the SCC
+  
+  std::vector<int> SCCadj;
+  
+  for( unsigned int scc=0; scc<SCCs.size(); scc++){
+  	for( unsigned int node=0; node<SCCs[scc].size(); node++ ){
+  		for( unsigned int w=0; w<nodes[node].adj.size(); w++ ){
+  			// if not in the same SCC
+  			for( unsigned int p=0; p<SCCs[scc].size(); p++){
+  				if( p == scc )
+  					continue;
+  			}
+  		}
+  		
+  	} // node
+  
+  } // scc
   
 }
 
