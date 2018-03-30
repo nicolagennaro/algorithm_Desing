@@ -39,6 +39,8 @@ class Graph{
 			
 			int dfs(int time);
 	                int Tarjan_SCC(int, std::stack<Graph::Node>&, std::vector<std::vector<Graph::Node>>&);
+	                int Tarjan_SCCint(int, std::stack<Graph::Node>&, std::vector<std::vector<int>> &);
+	  
 	  
 	  		bool operator==(const Node& other){ return this->name == other.name; }
 	  		bool operator!=(const Node& other){ return !(*this == other); }
@@ -259,6 +261,98 @@ for( auto n : nodes )
 
 
 
+int Graph::Node::Tarjan_SCCint(int time, std::stack<Graph::Node>& Q, std::vector<std::vector<int>>& SCCs){
+  #ifdef DEBUG
+    std::cout << "Node::Tarjan on Node " << this->name << std::endl;
+  #endif
+  this->print_all();
+  this->set_disc(time);
+  if( this->get_col() == color::white ){
+    this->set_ll(time);
+    }
+  time++;
+  // if( this->get_col() == color::white )
+  #ifdef DEBUG
+  std::cout << "discovery time: " << this->get_disc() << std::endl;
+  std::cout << "low link: " << this->get_ll() << std::endl;
+  #endif
+  Q.push(*this);
+  this->set_col(color::grey);
+  
+
+  
+  for( Graph::Node* w : adj){
+    if( w->get_col() == color::white ){
+      time = w->Tarjan_SCCint(time, Q, SCCs);
+      this->set_ll( this->get_ll() < w->get_ll() ? this->get_ll() : w->get_ll() );
+      #ifdef DEBUG
+    std::cout << "Node::Tarjan on Node " << this->get_name();
+    std::cout << " set lowlink to " << this->get_ll() << std::endl;
+      #endif
+    }
+    else{
+      if( w->get_col() == color::grey){
+        this->set_ll( this->get_ll() < w->get_ll() ? this->get_ll() : w->get_ll() );
+      #ifdef DEBUG
+    std::cout << "#Node::Tarjan on Node " << this->get_name();
+    std::cout << " set lowlink to " << this->get_ll() << std::endl;
+      #endif
+      }
+    }
+  }  
+
+
+  
+  this->set_col(color::black);
+  if( this->get_ll() == this->discovery_time ){
+    #ifdef DEBUG
+    std::cout << "Node::Tarjan on Node " << this->get_name();
+    std::cout << " lowlink = discovery time " << this->get_disc() << this->get_ll() << std::endl;
+    #endif
+    std::vector<int> temp;
+    while( Q.top() != *this && !Q.empty() ){
+      #ifdef DEBUG
+        std::cout << "Node::Tarjan on Node " << this->get_name();
+        std::cout << " pushing " << Q.top().get_name() << std::endl;
+      #endif
+      temp.push_back( Q.top().get_name() );
+      Q.pop();
+    }
+    
+      #ifdef DEBUG
+        std::cout << "Node::Tarjan on Node " << this->get_name();
+        std::cout << " pushing " << Q.top().get_name() << std::endl;
+      #endif
+	temp.push_back( Q.top().get_name() );
+    Q.pop();
+    SCCs.push_back(temp);
+  }
+
+  return time;
+} // Node::Tarjan_SCCint
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Graph::Tarjan_SCC(){
   
 std::stack<Graph::Node> Q;
@@ -358,87 +452,13 @@ int Graph::Node::Tarjan_SCC(int time, std::stack<Graph::Node>& Q, std::vector<st
 
 
 
-// tarjan scc int
-int Graph::Node::Tarjan_SCCint(int time, std::stack<Graph::Node>& Q, std::vector<std::vector<int>>& SCCs){
-  #ifdef DEBUG
-    std::cout << "Node::Tarjan on Node " << this->name << std::endl;
-  #endif
-  this->print_all();
-  this->set_disc(time);
-  if( this->get_col() == color::white ){
-    this->set_ll(time);
-    }
-  time++;
-  // if( this->get_col() == color::white )
-  #ifdef DEBUG
-  std::cout << "discovery time: " << this->get_disc() << std::endl;
-  std::cout << "low link: " << this->get_ll() << std::endl;
-  #endif
-  Q.push(*this);
-  this->set_col(color::grey);
-  
-
-  
-  for( Graph::Node* w : adj){
-    if( w->get_col() == color::white ){
-      time = w->Tarjan_SCC(time, Q, SCCs);
-      this->set_ll( this->get_ll() < w->get_ll() ? this->get_ll() : w->get_ll() );
-      #ifdef DEBUG
-    std::cout << "Node::Tarjan on Node " << this->get_name();
-    std::cout << " set lowlink to " << this->get_ll() << std::endl;
-      #endif
-    }
-    else{
-      if( w->get_col() == color::grey){
-        this->set_ll( this->get_ll() < w->get_ll() ? this->get_ll() : w->get_ll() );
-      #ifdef DEBUG
-    std::cout << "#Node::Tarjan on Node " << this->get_name();
-    std::cout << " set lowlink to " << this->get_ll() << std::endl;
-      #endif
-      }
-    }
-  }  
-
-
-  
-  this->set_col(color::black);
-  if( this->get_ll() == this->discovery_time ){
-    #ifdef DEBUG
-    std::cout << "Node::Tarjan on Node " << this->get_name();
-    std::cout << " lowlink = discovery time " << this->get_disc() << this->get_ll() << std::endl;
-    #endif
-    std::vector<Node> temp;
-    while( Q.top() != *this && !Q.empty() ){
-      #ifdef DEBUG
-        std::cout << "Node::Tarjan on Node " << this->get_name();
-        std::cout << " pushing " << Q.top().get_name() << std::endl;
-      #endif
-      temp.push_back(Q.top());
-      Q.pop();
-    }
-    
-      #ifdef DEBUG
-        std::cout << "Node::Tarjan on Node " << this->get_name();
-        std::cout << " pushing " << Q.top().get_name() << std::endl;
-      #endif
-    temp.push_back(Q.top());
-    Q.pop();
-    SCCs.push_back(temp);
-  }
-
-  return time;
-} // Node::Tarjan_SCC
-
-
-
-
 
 int main(){
 
 Graph g;
 g.print();
 
-g.Tarjan_SCC();
+g.Tarjan_SCCint();
 g.print_SCC();
 
 g.print();

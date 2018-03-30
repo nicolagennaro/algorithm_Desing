@@ -115,8 +115,8 @@ class Graph::Node{
 
 
 class Graph Graph::collapse(){
-
-  return *this;
+  
+  
 }
 
 

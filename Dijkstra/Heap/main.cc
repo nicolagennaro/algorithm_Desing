@@ -1,5 +1,5 @@
 #include <Graph.h>
-#include <MinHeap.h>
+#include <Heap.h>
 #include <iostream>
 #include <vector>
 
@@ -70,18 +70,25 @@ int main(){
   // }
   // std::cout << std::endl;
   
-  MinHeap<int> heap{vf, &great};
+  Heap<int> heap{vf, &great};
 
   while( !heap.empty() ){
     	std::cout << heap.Top() << std::endl;
   	heap.Pop();
   }
 
-  MinHeap<int> maxheap{vf, &less};
+  Heap<int> maxheap{vf, &less};
 
   while( !maxheap.empty() ){
     	std::cout << maxheap.Top() << std::endl;
   	maxheap.Pop();
   }  
+
+  std::vector<std::vector<int>> Adj1{{1,2}, {2,3}};
+  for( i : Adj1 )
+    for( j : i )
+      std::cout << j << std::endl;
+
+
   return 0;
 }
