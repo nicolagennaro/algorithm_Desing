@@ -18,6 +18,7 @@ class Graph{
 
         public:
 		Graph() { this->insert(); }
+		Graph(std::vector<std::vector<int>>&, std::vector<std::vector<double>>& );
 		// Graph(std::vector<Node> &v): nodes{v} {}
 		
 		void print();
@@ -25,13 +26,17 @@ class Graph{
 
 		void dfs();
 		void bfs(int);
+
 		void Tarjan_SCC();
 		
 		void Dijkstra(int);
-		
+
+		Graph collapse();
   		// void set_SCC(){ SCCs = this->Tarjan_SCC(); }
   		void print_SCC();
 };
+
+
 
 
 class Graph::Node{
@@ -106,6 +111,13 @@ class Graph::Node{
 
 			friend void Graph::bfs(int); // bfs must use adj[]
  };
+
+
+
+class Graph Graph::collapse(){
+
+  return *this;
+}
 
 
 
@@ -257,6 +269,27 @@ void Graph::print_SCC(){
  }
 
 }
+
+
+
+
+Graph::Graph(std::vector<std::vector<int>>& n, std::vector<std::vector<double>>& w){
+
+  for(unsigned int i=0; i<n.size(); i++){
+    Graph::Node node{(int) i};
+    nodes.push_back(node);
+  }
+
+  for(unsigned int i=0; i<n.size(); i++){
+    std::vector<Graph::Node*> v;
+    for( unsigned int j=0; j<n[i].size(); j++){
+      v.push_back( &nodes[ n[i][j] ] );
+    }
+    nodes[i].set_adj( v );
+    nodes[i].set_weights( w[i] );
+  }
+  
+} // Graph
 
 
 

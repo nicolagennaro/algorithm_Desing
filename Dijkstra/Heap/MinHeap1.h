@@ -12,10 +12,10 @@ class MinHeap{
   void BubbleDown(unsigned int);
   void BubbleUp(unsigned int);
   void Heapify();
-  bool (*compare)(T, T);  // true if greater
+  // bool (*compare)(T, T);  // true if greater
 
 public:
-  MinHeap(std::vector<T>&, bool (*)(T, T) );
+  MinHeap(std::vector<T>&);
 
   void Insert(T);
   T Top();
@@ -26,9 +26,8 @@ public:
 
 
 template<typename T>
-MinHeap<T>::MinHeap(std::vector<T>& vec, bool(*c)(T, T) ){
+MinHeap<T>::MinHeap(std::vector<T>& vec){
   v = vec;
-  compare = c;
   Heapify();
 }
 
@@ -51,10 +50,10 @@ void MinHeap<T>::BubbleDown(unsigned int n){
 
   unsigned int min_index = n;
 
-  if( compare(v[n], v[left_child]) )
+  if( v[n] > v[left_child] )
     min_index = left_child;
 
-  if( right_child < v.size() && compare(v[min_index], v[right_child]) )
+  if( right_child < v.size() && v[min_index] > v[right_child] )
     min_index = right_child;
 
   if( min_index != n ){
@@ -72,7 +71,7 @@ void MinHeap<T>::BubbleUp(unsigned int n){
 
   unsigned int parent=(n-1)/2;
 
-  if( compare(v[parent], v[n]) ){
+  if( v[parent] > v[n] ){
     T temp = v[parent];
     v[parent] = v[n];
     v[n] = temp;
@@ -107,6 +106,6 @@ void MinHeap<T>::Pop(){
 
 // explicit templates
 
-//template class MinHeap<int>;
-//template class MinHeap<double>;
+template class MinHeap<int>;
+template class MinHeap<double>;
 
