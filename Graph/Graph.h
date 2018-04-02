@@ -167,9 +167,13 @@ double* Graph::adj_UTmatrix(){
 	std::vector<int> sort;
 	sort = this->topological_sort();
 	
-	// remember that the name of nodes in this matrix follows the topological sort 
+	
+	
+	// remember that the name of nodes in this matrix follows the inverse topological sort 
 	// order, maybe first you should order the nodes vector 
-	std::cout << "sort.size() " << sort.size() << std::endl;
+	
+	
+	/*std::cout << "sort.size() " << sort.size() << std::endl;
 	for( unsigned int i=0; i<sort.size(); i++){
 		for( unsigned int w=0; w<nodes[i].adj.size(); w++ ){
 			std::cout << "inserting the node " << nodes[i].adj[w]->name << std::endl;
@@ -180,8 +184,31 @@ double* Graph::adj_UTmatrix(){
 				
 			mat[ i*nodes_num + pos ] = 1.0;
 		}
-	}
+	}*/
 	
+	
+	for( int i=sort.size()-1; i>=0; i--){
+		std::cout << "\nscanning list of node " << sort[i] << std::endl;
+		//if( nodes[ sort[i] ].adj )
+		//	std::cout << "nodes[ sort[i] ].adhj OK" << std::endl;
+		// std::cout << "   " << nodes[ sort[i] ].adj.size() << std::endl;
+		// std::cout << "SAFE" << std::endl;
+		// std::cout << " sort[i] " << sort[i] << std::endl;
+		for( unsigned int w=0; w<nodes[ sort[i] ].adj.size(); w++ ){
+			// std::cout << "here";
+			std::cout << "inserting the node " << nodes[ sort[i] ].adj[w]->name << std::endl;
+			// std::cout << "the position is the one in the inverse topo sort" << std::endl;
+			//int pos=sort.size()-1;
+			int pos=0;
+			while( sort[pos] != nodes[ sort[i] ].adj[w]->name )
+				pos++;
+				
+			std::cout << "i " << i << std::endl;
+			std::cout << "pos in sort " << pos << std::endl;
+			std::cout << "pos in mat " << (sort.size()-1-i) << " " << sort.size()-1 - pos << std::endl;
+			mat[ (sort.size()-1-i)*nodes_num + sort.size()-1 - pos ] = 1.0;
+		}
+	}
 	std::cout << "Final Matrix: " << std::endl;
 	print_mat(mat, nodes_num);
 
