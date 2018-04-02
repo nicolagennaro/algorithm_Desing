@@ -11,7 +11,6 @@ class Heap{
   std::vector<T> v;
   void BubbleDown(unsigned int);
   void BubbleUp(unsigned int);
-  void Heapify();
   bool (*compare)(T, T);  // true if greater
 
 public:
@@ -20,6 +19,7 @@ public:
   void Insert(T);
   T Top();
   void Pop();
+  void Heapify();
   
   bool empty(){ return v.empty(); }
 };

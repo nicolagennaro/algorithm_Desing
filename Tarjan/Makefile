@@ -1,14 +1,19 @@
 CXX = c++
-EXE = tarjan
+EXE = main
 CFLAGS = -std=c++11 -Wall -Wextra
-DFLAGS = -D DEBUG
+IFLAGS = -I ../Graph
+
 all: $(EXE)
 
 $(EXE): $(EXE).cc
-	$(CXX) $^ -o $@ $(CFLAGS) $(DFLAGS)
+	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
+
+# tarjan.o: tarjan.cc
+# 	$(CXX) -c $^ -o $@ $(CFLAGS) $(IFLAGS)
+
 
 
 clean:
-	@rm *~ $(EXE)
+	@rm *~ *.o $(EXE)
 
 .PHONY: clean

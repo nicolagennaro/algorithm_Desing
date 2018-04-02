@@ -7,7 +7,6 @@
 #include <cmath>
 #include <queue>
 #include <../Heap/Heap.h>
-#include <../Strassen/Strassen.h>
 
 
 
@@ -26,27 +25,17 @@ class Graph{
 		
 		void print();
 		void insert();
-		// int number_of_nodes() {return nodes.size(); };
 
 		void dfs();
 		void bfs(int);
-		
-		std::vector<int> topological_sort();
 
 		void Tarjan_SCC();
 		
 		void Dijkstra(int);
 
 		Graph collapse();
-		
-		double* adj_UTmatrix();
-		void Fischer_Mayer();
-		
   		// void set_SCC(){ SCCs = this->Tarjan_SCC(); }
   		void print_SCC();
-  		
-  		
-  		friend bool compare(Node*, Node*);
 };
 
 
@@ -128,7 +117,6 @@ class Graph::Node{
 	                bool operator<(const Node& other){ return this->distance < other.distance; }
 	               	
 			int dfs(int);
-			int topological_sort(int, std::queue<int> &);
 			
 			
 	                int Tarjan_SCC(int, std::stack<Graph::Node>&, std::vector<std::vector<int>> &);
@@ -136,161 +124,12 @@ class Graph::Node{
 			friend void Graph::bfs(int); // bfs must use adj[]
 			friend Graph Graph::collapse();
 			friend void Graph::Dijkstra(int);
-			friend bool compare(Node*, Node*);
-	                friend double* Graph::adj_UTmatrix();
+	                	  
 	  		
 
 			
 			
  };
-
-
-
-double* Graph::adj_UTmatrix(){
-
-	int nodes_num = nodes.size();
-	
-	std::cout << "nodes_num " << nodes_num << std::endl;
-	
-	double *mat = new double[ nodes.size() * nodes.size() ];
-	
-	for( int i=0; i<nodes_num; i++ ){
-		for( int j=0; j<nodes_num; j++){
-			if( i ==j )
-				mat[ i*nodes_num + j ] = 1.0;
-			else
-				mat[ i*nodes_num + j ] = 0.0;
-		}
-	}
-	
-	// contains nodes numbers from the topological sort
-	std::vector<int> sort;
-	sort = this->topological_sort();
-	
-	// remember that the name of nodes in this matrix follows the topological sort 
-	// order, maybe first you should order the nodes vector 
-	std::cout << "sort.size() " << sort.size() << std::endl;
-	for( unsigned int i=0; i<sort.size(); i++){
-		for( unsigned int w=0; w<nodes[i].adj.size(); w++ ){
-			std::cout << "inserting the node " << nodes[i].adj[w]->name << std::endl;
-			std::cout << "the position is the one in the topo sort" << std::endl;
-			int pos=0;
-			while( sort[pos] != nodes[i].adj[w]->name )
-				pos++;
-				
-			mat[ i*nodes_num + pos ] = 1.0;
-		}
-	}
-	
-	std::cout << "Final Matrix: " << std::endl;
-	print_mat(mat, nodes_num);
-
-return mat;
-}
-
-
-
-
-// FISCHER MAYER
-void Graph::Fischer_Mayer(){
-
-	// compute collapsed graph
-	
-	this->Tarjan_SCC();
-	Graph collapsed = this->collapse();
-
-	std::cout << "COLLAPSED GRAPH" << std::endl;
-	collapsed.print();
-	
-	// The adj matrix of collapsed should be built using this order to
-	// have an upper triangular matrix, this is the vector with name of nodes
-	
-	
-	double *m;
-	
-	m = collapsed.adj_UTmatrix();
-
-} // fisc mayer
-
-
-
-
-
-
-
-
-// topological sort of Graph
-// if V reaches W then S(V) < S(W), the topological order is the order of
-// execution if the edges represent a dependency 
-std::vector<int> Graph::topological_sort(){
-
-std::cout << "##########################################################" << std::endl;
-std::cout << "############       TOPOLOGICAL SORT         ##############" << std::endl;
-std::cout << "##########################################################" << std::endl;
-
-  for(unsigned int i=0; i<nodes.size(); i++){
-    nodes[i].set_col(color::white);
-    nodes[i].set_disc(-1);
-    nodes[i].set_fin(-1);
-  }
-
-  int time{0};
-  std::queue<int> Q;
-
-  for(unsigned int i=0; i<nodes.size(); i++)
-    if( nodes[i].get_col() == color::white )
-      time = nodes[i].topological_sort(time, Q);
-
- /* 
-  for(unsigned int i=0; i<nodes.size(); i++){
-    std::cout << "\nNode: " << nodes[i].get_name() << std::endl;
-    std::cout << "Discovery: " << nodes[i].get_disc() << std::endl;
-    std::cout << "Final:     " << nodes[i].get_fin() << std::endl;
-  }
-  
-  */
-  
-  std::vector<int> sorted_list;
-  while( !Q.empty() ){
-  	std::cout << "element: " << Q.front() << std::endl;
-  	sorted_list.push_back( Q.front() );
-  	Q.pop();
-  }
-  
-std::cout << "\n##########################################################" << std::endl;
-
-return sorted_list;
-
-} // topo graph
-
-
-int Graph::Node::topological_sort(int time, std::queue<int> &Q){
-
-  this->set_col(color::grey);
-  this->set_disc(time);
-  time++;
-
-  for(unsigned int i=0; i<adj.size(); i++){
-    if( adj[i]->get_col() == color::white ){
-      time = adj[i]->topological_sort(time, Q);
-    }
-  }
-
-  this->set_fin(time);
-  Q.push( this->name );
-  time++;
-
-  return time;
-
-} // Node::topological_sort
-
-
-
-
-
-
-
-
 
 
 
@@ -314,8 +153,7 @@ std::cout << "##########################################################" << std
   // for all nodes in the SCC, temp adj for SCC compute adj to nodes outside
   // if the edge not present add it to the vector of the adj of the SCC
   
-  std::vector<std::vector<int>> SCCadj;
-  std::vector<std::vector<double>> SCCweights;
+  std::vector<int> SCCadj;
   
   for( unsigned int scc=0; scc<SCCs.size(); scc++){
   
@@ -326,46 +164,27 @@ std::cout << "##########################################################" << std
   	// take node in the scc
   	for( unsigned int node=0; node<SCCs[scc].size(); node++ ){
   		
-  		std::cout << "Scanning node " << nodes[SCCs[scc][node]].name << std::endl;
-  		
   		// check the node adjacency list
-  		for( unsigned int w=0; w<nodes[ SCCs[scc][node] ].adj.size(); w++ ){
+  		for( unsigned int w=0; w<nodes[node].adj.size(); w++ ){
   			
   			
-  			std::cout << "Comparing with node " << nodes[SCCs[scc][node]].adj[w]->name << std::endl;
   			// if not in the same SCC
   			
   			bool same = false;
-  			// std::cout << "size of bool " << sizeof(bool) << std::endl;
-  			
-  			if( nodes[SCCs[scc][node]].SCC == nodes[SCCs[scc][node]].adj[w]->SCC )
-  				same = true;
-  			
-  			if( same )
-  				std::cout << nodes[SCCs[scc][node]].adj[w]->name << " " << nodes[SCCs[scc][node]].name << " same scc" << std::endl;
-  			else{
-  				std::cout << nodes[SCCs[scc][node]].adj[w]->name << " " << nodes[SCCs[scc][node]].name << " not same scc" << std::endl;
-  				
-  				// if the SCC of the node in the adj list is already in the adj list of
-  				// this SCC
-  				bool already_in = false;
-  				
-  				for( unsigned int j=0; j<adj.size(); j++ ){
-  					// if present and the path is shorter substitute the value
-  					if( nodes[SCCs[scc][node]].adj[w]->SCC == adj[j] ){
-  						std::cout << "already present" << std::endl;
-  						already_in = true;
-  					}
+  			std::cout << "size of bool " << sizeof(bool) << std::endl;
+  			unsigned int p;
+  			for( p=0; p<SCCs[scc].size(); p++){
+  				if( p == scc )
+  					continue;
+  				if( nodes[p].get_name() == nodes[node].get_name() ){
+  					same = true;
+  					break;
   				}
-  				
-  				
-  				// for( unsigned int j=0; j<)
-  				
-  				if( !already_in ){
-  					adj.push_back( nodes[SCCs[scc][node]].adj[w]->SCC );
-  					wei.push_back( nodes[SCCs[scc][node]].W[w] );
-  					}
   			}
+  			if( same )
+  				std::cout << node << " " << p << " same scc" << std::endl;
+  			else
+  				std::cout << node << " " << p << " not same scc" << std::endl;
   				
   			// if not already in the adj of the SCC
   			same = false;
@@ -374,22 +193,12 @@ std::cout << "##########################################################" << std
   		
   		
   	} // node
-  	
-  	SCCadj.push_back(adj);
- 	SCCweights.push_back(wei);
+  
   } // scc
   
-  
-  std::cout << "Collapsed graph: " << std::endl;
-    for( unsigned int scc=0; scc<SCCadj.size(); scc++){
-    	std::cout << "\nSCC number " << scc << std::endl;
-  	for( unsigned int i=0; i<SCCadj[scc].size(); i++ ){
-  		std::cout << SCCadj[scc][i] << " " << std::endl;
-  	}
-  	std::cout << std::endl;
-  }
-  
-  Graph r{ SCCadj, SCCweights };
+  std::vector<std::vector<int>> adj{ {1}, {0} };
+  std::vector<std::vector<double>> w{ {1.0}, {2.0} };
+  Graph r{ adj, w };
   
   
   std::cout << "##########################################################" << std::endl;
@@ -406,17 +215,6 @@ std::cout << "##########################################################" << std
 
 
 
-// function to compare nodes
-bool compare(Graph::Node* a, Graph::Node* b){
-	return a->get_distance() > b->get_distance();
-}
-
-
-struct heapItem{
-	int node;
-	double dist;
-	heapItem(int i, double d): node{i}, dist{d} {}
-};
 
 
 
@@ -435,57 +233,8 @@ for(unsigned int i=0; i<nodes.size(); i++){
 nodes[s].set_distance( 0.0 );
 nodes[s].set_parent( &nodes[s] );
 
-std::vector<Graph::Node*> nod;
+Heap<float> min_heap{};
 
-for(unsigned int i=0; i<nodes.size(); i++)
-	nod.push_back( &nodes[i] );
-
-std::cout << "\ncreating heap... " << std::endl;
-
-Heap<Graph::Node*> min_heap{ nod, &compare };
-
-std::cout << "\noriginal vector heap... " << std::endl;
-for(unsigned int i=0; i<nodes.size(); i++)
-	std::cout << nod[i]->get_name() << std::endl;
-
-std::cout << "\nheap.front() .. " << std::endl;
-std::cout << min_heap.Top()->get_name() << std::endl;
-std::cout << std::endl;
-
-int k=0;
-
-while( !min_heap.empty() && k<6 ){
-	Graph::Node *u = min_heap.Top();
-	min_heap.Pop();
-	std::cout << "while on Node " << u->get_name() << std::endl;
-	std::cout << "distance " << u->get_distance() << std::endl << std::endl;
-	// for( Graph::Node *w : u->adj ){
-	for( unsigned int i=0; i<u->adj.size(); i++ ){
-		std::cout << "adj: " << u->adj[i]->name << " u->adj[i]->distance " << u->adj[i]->distance << std::endl;
-		if( u->adj[i]->distance > (u->distance +  u->W[i]) ){
-			std::cout << "u->adj[i]->distance > (u->distance +  u->W[i])" << std::endl;
-			
-			u->adj[i]->set_distance( u->distance +  u->W[i] );
-			
-			min_heap.Heapify();
-			
-			std::cout << "\nheap top " << min_heap.Top()->get_name() << std::endl;
-			
-			u->adj[i]->set_parent( u );
-		}
-	}
-	k++;
-
-} // while
-
-	std::cout << "DIJKSTRA TERMINATED\n" << std::endl;
-	std::cout << "Started on node " << s << std::endl;
-	for(unsigned int i=0; i<nodes.size(); i++){
-		std::cout << "Node       " << nodes[i].get_name() << std::endl;
-		std::cout << "Distance   " << nodes[i].get_distance() << std::endl;
-		std::cout << "Parent     " << nodes[i].get_parent()->get_name() << std::endl;
-		std::cout << std::endl;
-	}
   std::cout << "##########################################################" << std::endl;
 
 } //dijkstra
