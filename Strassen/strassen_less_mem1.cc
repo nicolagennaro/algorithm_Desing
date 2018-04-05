@@ -84,6 +84,7 @@ void Strassen_real(T*, T*, T*, int);
 
 template<typename T>
 void Strassen(T* A, T* B, T* C, int size_in){
+
 	if( next_pow_two( size_in ) == size_in ){
 		Strassen_real(A, B, C, size_in);
 		return;
@@ -97,7 +98,17 @@ void Strassen(T* A, T* B, T* C, int size_in){
 	B_resized = resize_matrix( B, size_in, new_size );
 	C_resized = resize_matrix( C, size_in, new_size );
 	
+	std::cout << "matrices before" << std::endl;
+	print_mat(A_resized, new_size);
+	print_mat(B_resized, new_size);
+	print_mat(C_resized, new_size);
+	
 	Strassen_real(A_resized, B_resized, C_resized, new_size);
+	
+	std::cout << "matrices after" << std::endl;
+	print_mat(A_resized, new_size);
+	print_mat(B_resized, new_size);
+	print_mat(C_resized, new_size);
 	
 	delete[] A_resized;
 	delete[] B_resized;
@@ -180,16 +191,16 @@ void Strassen_real(T* A, T* B, T* C, int size_in){
   for(i=0; i<h_size; i++){
     for(j=0; j<h_size; j++){
       S1[ i*h_size + j ] = A[ i*size_in + j ] + A[ i*size_in + j + h_size ]; // S2 = A11 + A12
-      S2[ i*h_size + j ] = B[ (i+h_size)*size_in + j + h_size ]; // B22
+      S2[ i*h_size + j ] = B[ (i+h_size)*size_in + j + h_size ];             // B22
      }
   }
      
      
-      Strassen(S1, S2, P, h_size);  // P2
+      Strassen(S1, S2, P, h_size);  // P2 = S2 * B22
      
   for(i=0; i<h_size; i++){
     for(j=0; j<h_size; j++){     
-     C[ i*size_in + j ] -= P[i*h_size + j];                     // C11 = P4 + P5 + P6 - P2
+     C[ i*size_in + j ] -= P[i*h_size + j];                      // C11 = P4 + P5 + P6 - P2
      C[ i*size_in + j + h_size ] += P[ i*h_size + j ];           // C12 = P1 + P2
       }
   }    
@@ -220,7 +231,7 @@ void Strassen_real(T* A, T* B, T* C, int size_in){
   
   for(i=0; i<h_size; i++){
     for(j=0; j<h_size; j++){
-      S1[ i*h_size + j ] = A[ (i+h_size)*size_in + j + h_size ]; // A22
+      S1[ i*h_size + j ] = A[ (i+h_size)*size_in + j + h_size ];             // A22
       S2[ i*h_size + j ] = B[ (i+h_size)*size_in + j ] - B[ i*size_in + j ]; // S4 = B21 - B11
      }
   } 
@@ -264,7 +275,7 @@ void Strassen_real(T* A, T* B, T* C, int size_in){
   for(i=0; i<h_size; i++){
     for(j=0; j<h_size; j++){
       S1[ i*h_size + j ] = A[ i*size_in + j + h_size ] - A[ (i+h_size)*size_in + j + h_size ]; // S7 = A12 - A22
-      S2[ i*h_size + j ] = B[ i*size_in + j + h_size ] + B[ (i+h_size)*size_in + j + h_size ]; // S* = B12 + B22
+      S2[ i*h_size + j ] = B[ (i+h_size)*size_in + j ] + B[ (i+h_size)*size_in + j + h_size ]; // S8 = B21 + B22
      }
   }   
 
@@ -273,7 +284,7 @@ void Strassen_real(T* A, T* B, T* C, int size_in){
   
   for(i=0; i<h_size; i++){
     for(j=0; j<h_size; j++){
-      C[ i*size_in + j ] += P[i*h_size + j];                      // C11 = P4 + P5 + P6 - P2
+      C[ i*size_in + j ] += P[i*h_size + j];         // C11 = P4 + P5 + P6 - P2
      }
   }    
   
@@ -309,9 +320,20 @@ return;
 
 
 
+
+
+
+
+
 double rand_d(double a, double b){
   return a + (b-a)*double( rand() )/ double(RAND_MAX);
 }
+
+
+
+
+
+
 
 
 
