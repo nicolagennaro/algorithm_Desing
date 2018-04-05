@@ -51,6 +51,33 @@ int next_pow_two(int n){
 }
 
 
+template<typename T>
+T* resize_matrix(T* mat, int size, int new_size){
+
+	if( size == new_size )
+		return mat;
+
+	T* new_mat = new T[ new_size*new_size ];
+
+	for( int i=0; i<new_size; i++){
+		if( i<size ){
+		for( int j=0; j<new_size; j++){
+			if( j<size )
+				new_mat[ i*new_size + j ] = mat[ i*size + j ];
+			else
+				new_mat[ i*new_size + j ] = 0.0;	
+		}
+		}
+		else{
+			for( int j=0; j<new_size; j++)
+				new_mat[ i*new_size + j ] = 0.0; 
+		}
+	}
+
+	return new_mat;
+}
+
+
 
 template<typename T>
 void Strassen(T* A, T* B, T* C, int size_in){
@@ -454,6 +481,9 @@ int main(int argc, char* argv[]){
   int i, j;
   size = atoi(argv[1]);
   
+
+  	
+  
   std::cout << "Allocated size: " << size << std::endl;
 
 
@@ -463,6 +493,11 @@ int main(int argc, char* argv[]){
   B = new double[size*size];
   C = new double[size*size];
   CC = new double[size*size];
+
+
+int n = next_pow_two(size);
+std::cout << n << std::endl;
+
 
   for(i = 0; i<size; i++){
          for(j=0; j<size; j++){
@@ -479,6 +514,14 @@ int main(int argc, char* argv[]){
       std::cout << "Matrix B\n" << std::endl;
       print_mat(B, size);
       
+      
+      double *resizedA;
+      resizedA = resize_matrix( A, size, n);
+      
+      print_mat( resizedA, n );
+      
+      
+      /*
       Strassen(A,B,C,size);
 
       std::cout << "\nResult of Strassen\n" << std::endl;
@@ -490,7 +533,7 @@ int main(int argc, char* argv[]){
       print_mat(CC,size);
 
       compare(C,CC,size);
-
+*/
 
       
        delete[] A;

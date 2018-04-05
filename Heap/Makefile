@@ -9,6 +9,9 @@ all: $(EXE)
 $(EXE): $(EXE).cc
 	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
 
+BinaryHeap: BinaryHeap.cc
+	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
+
 clean:
 	@rm *~ *.o $(EXE)
 
