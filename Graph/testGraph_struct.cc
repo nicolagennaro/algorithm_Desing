@@ -40,6 +40,16 @@ int main(){
   
   Graph collapsed;
   collapsed = g1.collapse();
+  
+  collapsed.print();
+  
+  std::vector<std::pair<int,int>> r;
+  r = g1.topological_sort1();
+  for( unsigned int i=0; i<r.size(); i++){
+  	std::cout << "Node " << r[i].first << " S: " << r[i].second << std::endl;
+  }
+  
+  g1.Fischer_Mayer();
     
   return 0;
 }

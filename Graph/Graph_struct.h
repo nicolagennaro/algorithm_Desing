@@ -36,7 +36,9 @@ class Graph{
 		void dfs();
 		void bfs(int);
 		
+		// returns a vector with nodes number and S(nodes)
 		std::vector<int> topological_sort();
+		std::vector<std::pair<int, int>> topological_sort1( bool = false );
 
 		std::vector<std::vector<int>> Tarjan_SCC();
 		
@@ -90,18 +92,84 @@ struct Graph::Node{
 			
 			
 	int Tarjan_SCC(int, std::stack<Graph::Node*>&, std::vector<std::vector<int>> &);
- };
+ 
+ }; // Graph::Node
 
 
-/*
+
+
+
+void zero_one( double* mat, int size ){
+
+for ( int i=0; i<size; i++ )
+	for( int j=0; j<size; j++ ) 
+		if( mat[ i*size + j ] != 0.0 )
+			mat[ i*size + j ] = 1.0;
+
+}
+
+
+
+
+void compute_TC_matrix_real(double* M, int size){
+	
+	if( size == 1 )
+		return;
+		
+	int h_size = size/2;
+	double *A, *B, *C, *D;
+	
+	A = new double[h_size*h_size];
+	
+	
+	
+	B = new double[h_size*h_size];
+	C = new double[h_size*h_size];
+	D = new double[h_size*h_size];
+
+}
+
+
+
+
+void compute_TC_matrix( double* M, int size ){
+	
+	if( next_pow_two(size) == size ){
+		compute_TC_matrix_real(M, size);
+		return;
+	}
+	
+	int new_size = next_pow_two(size);
+	double *M_resized;
+	
+	M_resized = resize_matrix(M, size, new_size);
+	
+	compute_TC_matrix_real(M_resized, new_size);
+	
+	for( int i=0; i<size; i++ )
+		for( int j=0; j<size; j++ )
+			M[ i*size + j ] = M_resized[ i*new_size + j ];
+			
+	delete[] M_resized;
+}
+
+
+
+
 
 double* Graph::adj_UTmatrix(){
+
+
+std::cout << "##########################################################" << std::endl;
+std::cout << "############         adj_UTmatrix           ##############" << std::endl;
+std::cout << "##########################################################" << std::endl;
+
 
 	int nodes_num = nodes.size();
 	
 	std::cout << "nodes_num " << nodes_num << std::endl;
 	
-	double *mat = new double[ nodes.size() * nodes.size() ];
+	double *mat = new double[ nodes_num * nodes_num ];
 	
 	for( int i=0; i<nodes_num; i++ ){
 		for( int j=0; j<nodes_num; j++){
@@ -112,32 +180,42 @@ double* Graph::adj_UTmatrix(){
 		}
 	}
 	
-	// contains nodes numbers from the topological sort
-	std::vector<int> sort;
-	sort = this->topological_sort();
+	// contains nodes numbers from the topological sort (node_number, Sort)
+	std::vector<std::pair<int,int>> topo;
+	
+	topo = this->topological_sort1(true);
+	
+	std::cout << "N S" << std::endl;
+	for( unsigned int i=0; i<topo.size(); i++ ){
+		std::cout << topo[i].first << " " << topo[i].second << std::endl;
+	}
+	
+	// sort the nodes of the collapsed graph following decreasing order of S
 	
 	
 	
 	// remember that the name of nodes in this matrix follows the inverse topological sort 
 	// order, maybe first you should order the nodes vector 
 	
-	*/
-	/*std::cout << "sort.size() " << sort.size() << std::endl;
-	for( unsigned int i=0; i<sort.size(); i++){
-		for( unsigned int w=0; w<nodes[i].adj.size(); w++ ){
-			std::cout << "inserting the node " << nodes[i].adj[w]->name << std::endl;
+	
+	// std::cout << "sort.size() " << sort.size() << std::endl;
+	
+	int size = topo.size()-1;
+	for( int i=size; i>=0; i--){
+		for( unsigned int w=0; w<nodes[ topo[i].first ].adj.size(); w++ ){
+			std::cout << "inserting the node " << nodes[ topo[i].first ].adj[w]->name << std::endl;
 			std::cout << "the position is the one in the topo sort" << std::endl;
 			int pos=0;
-			while( sort[pos] != nodes[i].adj[w]->name )
+			while( topo[pos].first != nodes[ topo[i].first ].adj[w]->name )
 				pos++;
 				
-			mat[ i*nodes_num + pos ] = 1.0;
+			mat[ (size-i)*nodes_num + size -pos ] = 1.0;
 		}
-	}*/
+	}
 	
+	// print_mat(mat, nodes_num);
 	
 	/*
-	
 	
 	for( int i=sort.size()-1; i>=0; i--){
 		std::cout << "\nscanning list of node " << sort[i] << std::endl;
@@ -163,23 +241,30 @@ double* Graph::adj_UTmatrix(){
 	}
 	std::cout << "Final Matrix: " << std::endl;
 	print_mat(mat, nodes_num);
+	
+	*/
 
 return mat;
 }
 
-*/
-/*
+
+
 
 // FISCHER MAYER
 void Graph::Fischer_Mayer(){
 
+std::cout << "##########################################################" << std::endl;
+std::cout << "############         FISCHER-MAYER          ##############" << std::endl;
+std::cout << "##########################################################" << std::endl;
+
 	// compute collapsed graph
 	
-	this->Tarjan_SCC();
 	Graph collapsed = this->collapse();
 
 	std::cout << "COLLAPSED GRAPH" << std::endl;
 	collapsed.print();
+	std::cout << std::endl;
+
 	
 	// The adj matrix of collapsed should be built using this order to
 	// have an upper triangular matrix, this is the vector with name of nodes
@@ -188,6 +273,12 @@ void Graph::Fischer_Mayer(){
 	double *m;
 	
 	m = collapsed.adj_UTmatrix();
+	
+	int SCCsize = collapsed.nodes.size();
+	
+	std::cout << "Adjacency matrix of collapsed graph" << std::endl;
+	print_mat(m, SCCsize);
+	std::cout << std::endl;
 
 } // fisc mayer
 
@@ -197,6 +288,54 @@ void Graph::Fischer_Mayer(){
 
 
 
+
+std::vector<std::pair<int,int>> Graph::topological_sort1( bool sort ){
+
+std::cout << "##########################################################" << std::endl;
+std::cout << "############       TOPOLOGICAL SORT1        ##############" << std::endl;
+std::cout << "##########################################################" << std::endl;
+
+  std::vector<std::vector<int>> SCCs;
+
+  SCCs = Tarjan_SCC();
+  
+  int S = 1;
+  std::pair<int,int> p;
+  std::vector<std::pair<int,int>> r;
+  for( unsigned int i=0; i<SCCs.size(); i++ ){
+  	for( unsigned int j=0; j<SCCs[i].size(); j++ ){
+  		p = {SCCs[i][j], S};
+  		r.push_back(p);
+  	}
+  	S++;
+  }
+
+  if( sort ){ 
+  	
+  	// insertion sort
+  	int key;
+  	int other_key;
+  	for( unsigned int j=1; j<r.size(); j++ ){
+  		key = r[j].second;
+  		other_key = r[j].first;
+  		int i = j-1;
+  		while( i>=0 && r[i].second>key ){
+  			r[i+1].second = r[i].second;
+  			r[i+1].first = r[i].first;
+  			i--;
+  		}
+  		r[i+1].second = key;
+  		r[i+1].first = other_key;
+  	}
+  	
+  	
+  }
+  
+  return r;
+} // topo1
+
+
+/*
 
 // topological sort of Graph
 // if V reaches W then S(V) < S(W), the topological order is the order of
@@ -208,16 +347,16 @@ std::cout << "############       TOPOLOGICAL SORT         ##############" << std
 std::cout << "##########################################################" << std::endl;
 
   for(unsigned int i=0; i<nodes.size(); i++){
-    nodes[i].set_col(color::white);
-    nodes[i].set_disc(-1);
-    nodes[i].set_fin(-1);
+    nodes[i].col = color::white;
+    nodes[i].discovery_time = -1;
+    nodes[i].final_time = -1;
   }
 
   int time{0};
   std::queue<int> Q;
 
   for(unsigned int i=0; i<nodes.size(); i++)
-    if( nodes[i].get_col() == color::white )
+    if( nodes[i].col == color::white )
       time = nodes[i].topological_sort(time, Q);
 
  for(unsigned int i=0; i<nodes.size(); i++){
@@ -265,9 +404,6 @@ int Graph::Node::topological_sort(int time, std::queue<int> &Q){
 
 
 */
-
-
-
 
 
 
@@ -564,7 +700,7 @@ std::cout << "##########################################################" << std
 
   for(unsigned int i=0; i<nodes.size(); i++){
     nodes[i].col = color::white;
-    nodes[i].distance = INFINITY;
+    nodes[i].discovery_time = -1;
     nodes[i].final_time = -1;
   }
 

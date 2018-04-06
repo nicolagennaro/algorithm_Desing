@@ -148,7 +148,7 @@ void Strassen_real(T* A, T* B, T* C, int size_in){
      int h_size = size_in/2;
 
 
-  // make sure the entries of C are all zeros since we need to sum them 
+  // make sure the entries of C are all zeros, since we need to sum them 
   for(i=0; i<size_in; i++){
     for(j=0; j<size_in; j++){
     	C[ i*size_in + j ] = 0.0;
