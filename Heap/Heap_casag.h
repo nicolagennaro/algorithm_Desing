@@ -2,6 +2,17 @@
 #define __HEAP_CASAG__
 
 #include<cstdlib>
+// #include<exception>
+#include<iterator>
+
+
+// #define MAX_HEAP_SIZE 100
+
+
+struct Heap_Error{
+	std::string message;
+};
+
 
 template<typename T>
 class ValueComparator{
@@ -26,6 +37,14 @@ class BinaryHeap{
 		size_t max_size;
 		size_t num_of_elem;
 		
+		
+		// static means that the function can be called even if no objects of the class exist
+		// Static member functions are not associated with any object. When called, they have no 'this' pointer.
+		// they are not stored in the object but there is one function pointer to it
+		// The address of a static member function may be stored in a regular pointer to function, but not in a 
+		// pointer to member function.
+
+		
 		static inline size_t right_son(const size_t i) { return 2*(i+1); }
 		static inline size_t left_son(const size_t i) { return 2*i + 1; }
 		static inline size_t father(const size_t i) { return (i-1)/2; }
@@ -37,29 +56,75 @@ class BinaryHeap{
 		void heapify( size_t i ){
 		
 			do{
-			size_t min_son_id = left_son(i);
-			if( min_son_id >= num_of_elem )
-				return;
-			if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) > 0)
-				min_son_id = right_son(i);
-			if( Comparator<T>::CMP(container[i], container[min_son_id] ) < 0)
-				swap(i, min_son_id);
-			else
-				return;
+				size_t min_son_id = left_son(i);
 				
-			i = min_son_id;
+				std::cout << "min " << min_son_id << std::endl;
+				
+				if( min_son_id >= num_of_elem ){
+					std::cout << "   min >= num_of" << num_of_elem << std::endl;
+					return;
+					}
+				// right_son
+				if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) < 0){
+					min_son_id = right_son(i);
+					std::cout << "   Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) > 0" << std::endl;
+					std::cout << "   min_son " << min_son_id << std::endl;
+					}
+				if( Comparator<T>::CMP(container[i], container[min_son_id] ) < 0){
+					std::cout << "  swap " << i << " " << min_son_id << std::endl;
+					swap(i, min_son_id);
+					// heapify(min_son_id);
+				}
+				else
+					return;
+				
+				i = min_son_id;
 			
 			}while( true );
+			/*
+			do{
+				size_t min_son_id = i;
+				std::cout << "min " << min_son_id << std::endl;
+				if( left_son(i) >= num_of_elem ){
+					std::cout << "   min >= num_of" << num_of_elem << std::endl;
+					return;
+					}
+				
+				std::cout << "i " << container[i] << " left " << container[left_son(i)] << std::endl;
+				if( Comparator<T>::CMP(container[i], container[left_son(i)]) > 0 )
+					min_son_id = left_son(i);
+					
+				if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) > 0){
+					min_son_id = right_son(i);
+					std::cout << "   Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) > 0" << std::endl;
+					std::cout << "   min_son " << min_son_id << std::endl;
+					}
+				if( Comparator<T>::CMP(container[i], container[min_son_id] ) > 0 || Comparator<T>::CMP(container[i], container[min_son_id] ) < 0){
+					std::cout << "  swap " << i << " " << min_son_id << std::endl;
+					swap(i, min_son_id);
+					// heapify(min_son_id);
+				}
+				else
+					return;
+				
+				i = min_son_id;
+			
+			}while( true );
+			*/
 		}
 		
 		void build_heap(){
-			for( size_t i = num_of_elem/2; i>0; i--)
+			// original for( size_t i = num_of_elem/2; i>0; i--)
+			for( size_t i = num_of_elem/2; i>0; i--){
+				std::cout << "heapify " << i << std::endl;
 				heapify(i);
+				}
+			std::cout << "build_heap " << num_of_elem << std::endl;
 			if( num_of_elem > 0 )
 				heapify(0);
 		}
 		
-		void fit_heap( size_t i ){
+		void fix_heap( size_t i ){
 			size_t father_id = father(i);
 			
 			while( (i != 0) && (Comparator<T>::CMP(container[i], container[father_id]) > 0) ){
@@ -70,12 +135,13 @@ class BinaryHeap{
 		}
 		
 		// this method copy a generic std container in the heap data structure called container
+		// std::allocator is the standard allocator for all types
 		template< template<typename, typename> class C >
-			void copy_in_heap( const C<T, std::allocator<T>> & container){
+		void copy_in_heap( const C<T, std::allocator<T>> & container){
 			num_of_elem = 0;
 			max_size = container.size();
 			this->container = new T[max_size];
-			for( typename C<T, std::allocator<T>>::const_iterators it = std::cbegin(container); it != std::cend(container); ++it)
+			for( typename C<T, std::allocator<T>>::const_iterator it = std::cbegin(container); it != std::cend(container); ++it)
 				this->container[ num_of_elem++ ] = *it;
 		}
 
@@ -92,23 +158,22 @@ class BinaryHeap{
 		~BinaryHeap() { delete[] container; }
 		
 		void insert( const T& value ){
-			// check size !!! max_size > num_of_elem
+			// check size !!!
 			if( num_of_elem+1 > max_size )
-				exit(1);
+				throw Heap_Error{"Heap: Reached max heap size " + std::to_string(max_size)};
 				
 			container[num_of_elem] = value;
 			fix_heap(num_of_elem);
 			num_of_elem++; 
-		
 		}
 		
+		// returns the first element of the Heap
 		const T& root_value() const{
-			// check size !!! max_size > num_of_elem
 			return container[0];
 		}
 		
+		// delete the first element of the Heap 
 		void delete_root(){
-			// check size !!! max_size > num_of_elem
 			swap(0, num_of_elem-1);
 			num_of_elem--;
 			heapify(0);
@@ -118,10 +183,12 @@ class BinaryHeap{
 			if( Comparator<T>::CMP(container[i], value) > 0 ){
 				return;
 				// throw //exception;
-				}
+			}
 			container[i] = value;
 			fix_heap(i);
 		}
+		
+		bool empty() { return num_of_elem==0; }
 		
 };
 

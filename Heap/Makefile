@@ -1,7 +1,7 @@
 CXX = c++
-EXE = heap
-CFLAGS = -std=c++11 -Wall -Wextra
-DFLAGS = -D DEBUG
+EXE = test_Heap_casag
+CFLAGS = -std=c++14 -Wall -Wextra
+#DFLAGS = -D DEBUG
 IFLAGS = -I . 
 
 all: $(EXE)
