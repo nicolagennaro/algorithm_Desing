@@ -16,7 +16,7 @@ class ValueComparator{
 	public:
 		static int CMP(const T& a, const T& b){
 			if( a>b ) return 1;
-			else if ( b<a ) return -1;
+			else if ( b>a ) return -1;
 			else return 0; 
 		}
 };
@@ -152,7 +152,7 @@ class BinaryHeap{
 		
 		BinaryHeap(): container{nullptr}, max_size{0}, num_of_elem{0} {}
 		
-		~BinaryHeap() { delete[] container; }
+		virtual ~BinaryHeap() { delete[] container; }
 		
 		void insert( const T& value ){
 			// check size !!!
@@ -170,13 +170,15 @@ class BinaryHeap{
 		}
 		
 		// delete the first element of the Heap 
-		void delete_root(){
+		const T& delete_root(){
+			T el = container[0];
 			swap(0, num_of_elem-1);
 			num_of_elem--;
 			heapify(0);
+			return el;
 		}
 		
-		void change_value( size_t i, const T& value ){
+		void change_value( const size_t i, const T& value ){
 			if( Comparator<T>::CMP(container[i], value) > 0 ){
 				return;
 				// throw //exception;
@@ -186,6 +188,37 @@ class BinaryHeap{
 		}
 		
 		bool empty() { return num_of_elem==0; }
+		
+		inline size_t size() const { return num_of_elem; }
+		
+		inline size_t get_max_size() const { return max_size; }
+		
+		const T& operator[](const size_t& i) const { 
+			if( i<size() )
+				return container[i]; 
+			throw std::out_of_range("...");
+		}
+		
+		const BinaryHeap<T,Comparator>& operator=( const BinaryHeap<T,Comparator>& other){
+			delete[] container;
+			num_of_elem = other.num_of_elem;
+			max_size = other.max_size;
+			container = new T[max_size];
+			// std::copy(other.container,other.container + other.size(), container )
+			for( size_t i=0; i<other.size(); i++)
+				container[i] = other.container[i];
+			return *this;
+		}
+		
+		std::ostream& operator<< (std::ostream& os, const BinaryHeap<Comparator>& H){
+			os << "BinaryHeap[ "
+			if( H.size() > 0 )
+				os << H[0];
+			for( size_t i=1; i<size(); i++)
+				os << ", " << H[i];
+			os << " ]" << std::endl;
+			return os;
+		}
 		
 };
 
