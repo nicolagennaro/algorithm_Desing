@@ -1,0 +1,23 @@
+#include <Graph1.h>
+#include <iostream>
+
+
+class Weighted_Graph: public Graph{
+
+public:
+  std::vector<std::vector<unsigned int>> W;
+
+  Weighted_Graph(std::vector<std::vector<int>>& adj, std::vector<std::vector<unsigned int>>& w): Adj{adj}, W{w}{ }
+
+  void print() const {
+
+  }
+
+};
+
+
+
+int main(){
+
+  return 0;
+}

@@ -1,12 +1,14 @@
 CXX = c++
-EXE = select_clean
+EXE = dfs
 CFLAGS = -std=c++11 -Wall -Wextra
 #DFLAGS = -D DEBUG
+IFLAGS = -I ./
+
 
 all: $(EXE)
 
 $(EXE): $(EXE).cc
-	$(CXX) $^ -o $@ $(CFLAGS) $(DFLAGS)
+	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
 
 
 clean:
