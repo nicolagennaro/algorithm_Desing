@@ -1,14 +1,14 @@
 CXX = c++
-EXE = tarjan
-CFLAGS = -std=c++11 -Wall -Wextra
-#DFLAGS = -D DEBUG
+SRC = $(wildcard *.cc)
+EXE = $(SRC:.cc=.x)
+CFLAGS = -std=c++14 -Wall -Wextra
 IFLAGS = -I ./
 
 
 all: $(EXE)
 
-$(EXE): $(EXE).cc
-	$(CXX) $^ -o $@ $(CFLAGS) $(IFLAGS)
+%.x: %.cc
+	$(CXX) $< -o $@ $(CFLAGS) $(IFLAGS)
 
 
 clean:

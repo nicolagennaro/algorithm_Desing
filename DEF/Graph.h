@@ -27,6 +27,8 @@ class Graph{
  public:
 	std::vector<std::vector<unsigned int>> Adj;
 
+        Graph(): Adj{} {}
+	
         Graph(std::vector<std::vector<unsigned int>>& adj): Adj{adj} {};
 
 	size_t size() const { return Adj.size(); }

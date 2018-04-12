@@ -1,5 +1,5 @@
 #include<iostream>
-#include<Heap_casag.h>
+#include<Heap_casag1.h>
 #include<vector>
 
 // opposite on that on the header
@@ -8,7 +8,7 @@ class myValueComparator{
 	public:
 		static int CMP(const T& a, const T& b){
 			if( a>b ) return -1;
-			else if ( b<a ) return 1;
+			else if ( a<b ) return 1;
 			else return 0; 
 		}
 };
@@ -26,8 +26,8 @@ int main(){
   
 
  while( !min_heap.empty() ){
- std::cout << "root_value(): " << min_heap.root_value() << std::endl;
- min_heap.delete_root();   
+   std::cout << "root_value(): " << min_heap.root_value() << std::endl;
+   min_heap.delete_root();   
  }
 
 

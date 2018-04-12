@@ -210,8 +210,8 @@ class BinaryHeap{
 			return *this;
 		}
 		
-		std::ostream& operator<< (std::ostream& os, const BinaryHeap<Comparator>& H){
-			os << "BinaryHeap[ "
+		friend std::ostream& operator<<(std::ostream& os, const BinaryHeap<T,Comparator>& H){
+			os << "BinaryHeap[ ";
 			if( H.size() > 0 )
 				os << H[0];
 			for( size_t i=1; i<size(); i++)

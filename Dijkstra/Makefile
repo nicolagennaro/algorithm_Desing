@@ -1,5 +1,5 @@
 CXX = c++
-EXE = dijkstra
+EXE = Astar
 CFLAGS = -std=c++11 -Wall -Wextra
 #DFLAGS = -D DEBUG
 IFLAGS = -I ../Graph -I ../Heap
