@@ -5,12 +5,6 @@
 #include<iterator>
 
 
-
-struct Heap_Error{
-	std::string message;
-};
-
-
 template<typename T>
 class ValueComparator{
 	public:
@@ -72,17 +66,17 @@ class BinaryHeap{
 					return;
 					}
 				
-				std::cout << "cont[ " << i << " ] = " << container[i] << std::endl; 
+				//std::cout << "cont[ " << i << " ] = " << container[i] << std::endl; 
 				
 				// if container[ left_son ] < container[right_son]
 				// if container[min_son_id] < container[right_son]
 				if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) < 0){
-					std::cout << "here" << std::endl;
+					//std::cout << "here" << std::endl;
 					min_son_id = right_son(i);
 					}
 				// if container[min_son_id] < container[i] 
 				if( Comparator<T>::CMP(container[i], container[min_son_id] ) < 0){
-					std::cout << "swap " << container[i] << " " << container[min_son_id] << std::endl;
+					//std::cout << "swap " << container[i] << " " << container[min_son_id] << std::endl;
 					swap(i, min_son_id);
 				}
 				else
@@ -96,21 +90,23 @@ class BinaryHeap{
 		void build_heap(){
 			// original for( size_t i = num_of_elem/2; i>0; i--)
 			for( size_t i = num_of_elem/2; i>0; i--){
-				std::cout << "heapify " << i << std::endl;
+				//std::cout << "heapify " << i << std::endl;
 				heapify(i);
 				}
-			std::cout << "build_heap " << num_of_elem << std::endl;
+			//std::cout << "build_heap " << num_of_elem << std::endl;
 			if( num_of_elem > 0 ){
-				std::cout << "heapify " << "0" << std::endl;
+				//std::cout << "heapify " << "0" << std::endl;
 				heapify(0);
 				}
 		}
 		
 		void fix_heap( size_t i ){
 			size_t father_id = father(i);
-			
+			std::cout << "fix on " << i << std::endl;
 			while( (i != 0) && (Comparator<T>::CMP(container[i], container[father_id]) > 0) ){
-				swap( container[i], container[father_id] );
+				std::cout << "swap " << i << " " << father_id << std::endl;
+				//swap( container[i], container[father_id] );
+				swap(i, father_id);
 				i = father_id;
 				father_id = father(i);
 			}
@@ -142,7 +138,7 @@ class BinaryHeap{
 		void insert( const T& value ){
 			// check size !!!
 			if( num_of_elem+1 > max_size )
-				throw Heap_Error{"Heap: Reached max heap size " + std::to_string(max_size)};
+				throw std::out_of_range("...");
 				
 			container[num_of_elem] = value;
 			fix_heap(num_of_elem);
@@ -155,13 +151,12 @@ class BinaryHeap{
 		}
 		
 		// delete the first element of the Heap 
-		T delete_root(){
-			T el = container[0];
+		const T& delete_root(){
+			// T el = container[0];
 			swap(0, num_of_elem-1);
-			
 			num_of_elem--;
 			heapify(0);
-			return el;
+			return container[num_of_elem];
 		}
 		
 		void change_value( const size_t i, const T& value ){
@@ -169,7 +164,9 @@ class BinaryHeap{
 				return;
 				// throw //exception;
 			}
+			std::cout << " changing " << container[i] << " in "  << value << std::endl;
 			container[i] = value;
+			//std::cout << container[i] << std::endl;
 			fix_heap(i);
 		}
 		
@@ -207,6 +204,113 @@ class BinaryHeap{
 		}
 		
 };
+
+template <typename T, template<typename> class Comparator=ValueComparator >
+class AssociativeBinaryHeap: public BinaryHeap<T, Comparator>{
+
+	protected:
+		// maps the nodes of the graph to the position of the binary heap
+		// this is why swap was virtual, we have to swap also this MAP
+		
+		size_t *MAP;
+	
+		// overrides the swap method in the base class
+		// now also the heapify and other methods that use swap calls this swap function, not the original one
+		
+		void swap( const size_t i, const size_t j ) override{
+			//std::swap( container[i], container[j] );
+			BinaryHeap<T, Comparator>::swap(i,j);
+			std::swap( MAP[i], MAP[j] );
+		}
+	
+	public:
+		// some compilers complains if we don't create the base class before using its methods, that's why
+		// BinaryHeap
+		template< template<typename, typename> class C >
+		AssociativeBinaryHeap( const C<T, std::allocator<T>>& cont ): BinaryHeap<T, Comparator> {}, MAP{NULL} {
+			this->copy_in_heap( cont );
+			MAP = new size_t[this->max_size];
+			// maps the nodes of the graph to the nodes in the heap, we use integer numbers
+			for( size_t i=0; i<this->max_size; i++)
+				MAP[i] = i;
+			this->build_heap();
+		}
+		
+		// we also need a new insertion method
+		void insert( const T& value ){
+			// check size
+			
+			MAP[ this->num_of_elem ] = this->num_of_elem;
+			
+			this->container[this->num_of_elem] = value;
+			fix_heap(this->num_of_elem);
+			this->num_of_elem++; 
+			// size_t i = num_of elem
+			// container[i] = value;
+			// fix)heap(i)
+			
+		
+		}
+		
+		// 
+		inline const size_t& index( const size_t Graph_node ) const {
+			// check size
+		 	return MAP[Graph_node]; 
+		 }
+		
+		// std::ostream& operator<<( std::ostream& os, const AssociativeBinaryHeap<T, Comparator>&  )
+		void print(){
+			for(size_t i=0; i<this->num_of_elem; i++)
+				std::cout << this->container[i] << " ";
+			std::cout << std::endl;
+			for(size_t i=0; i<this->num_of_elem; i++)
+				std::cout << MAP[i] << " ";
+			std::cout << std::endl;
+			
+		}
+
+};
+
+
+
+template<typename T>
+class MyValueComparator{
+public:
+  static int CMP(const T& a, const T& b){
+    if( b>a ) return 1;
+    else if( a>b ) return -1;
+    else return 0;
+  }
+};
+
+
+class NodeAndDistance{
+	public:
+		size_t node;
+		double distance;
+		
+		NodeAndDistance() {};
+		NodeAndDistance(const size_t n, const double d): node{n}, distance{d} {}
+		
+		friend std::ostream& operator<<(std::ostream& os, NodeAndDistance& nd){
+			os << "Node " << nd.node << " distance " << nd.distance << std::endl;
+			return os;
+		}
+		
+		bool operator<( const NodeAndDistance& other ) const { return distance < other.distance; }
+		bool operator>( const NodeAndDistance& other ) const { return distance > other.distance; }
+		bool operator=( const NodeAndDistance& other ) const { return !(distance < other.distance) && !(distance > other.distance); }
+		
+};
+
+template<typename T>
+class NodeAndDistanceComparator{
+	public:
+		static int CMP( const NodeAndDistance& a, const NodeAndDistance& b ){
+			return MyValueComparator<double>::CMP(a.distance, b.distance);
+		}
+};
+
 
 
 #endif
