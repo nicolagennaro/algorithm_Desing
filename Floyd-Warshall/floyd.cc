@@ -1,5 +1,5 @@
-#include <Graph.h>
-#include <Strassen.h>
+#include <../DEF/Graph.h>
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -7,16 +7,32 @@
 #define MIN(X,Y) (((X)<(Y)) ? (X) : (Y))
 
 
+template<typename T>
+void print_mat( T* A, const size_t size){
+  size_t i,j;
+  for(i=0; i<size; i++){
+    for(j=0; j<size; j++)
+      std::cout << A[ i*size + j ] << "\t";
+    std::cout << std::endl;
+  }
+}
 
-double* weight_matrix(Graph G&, std::vector<std::vector<double>>& W){
+
+
+
+double* weight_matrix(Graph& G, std::vector<std::vector<double>>& W){
 
   size_t size = G.size();
 
-  double adj_mat = new double[size*size];
+  double *adj_mat = new double[size*size];
 
   for(unsigned int i=0; i<size; i++)
-    for(unsigned int j=0; j<size; j++)
-      adj_mat[i*size + j] = INFINITY;
+    for(unsigned int j=0; j<size; j++){
+    	if( i==j)
+    		adj_mat[i*size + j] = 0.0;
+    	else
+      		adj_mat[i*size + j] = INFINITY;
+    }
 
   for(unsigned int i=0; i<G.size(); i++)
     for(unsigned int j=0; j<G.Adj[i].size(); j++)
@@ -26,7 +42,7 @@ double* weight_matrix(Graph G&, std::vector<std::vector<double>>& W){
 }
 
 
-double* floyd_warshall(Graph G&, std::vector<std::vector<double>>& W){
+double* floyd_warshall(Graph& G, std::vector<std::vector<double>>& W){
   double *old_mat, *new_mat;
 
   size_t size = G.size();
@@ -42,7 +58,7 @@ double* floyd_warshall(Graph G&, std::vector<std::vector<double>>& W){
   for(unsigned int k=0; k<size; k++){
     for(unsigned int i=0; i<size; i++){
       for(unsigned int j=0; j<size; j++){
-	new_mat[i][j] = MIN(old_mat[i][j], old_mat[i][k] + old_mat[k][j]);
+	new_mat[i*size + j] = MIN(old_mat[i*size + j], old_mat[i*size + k] + old_mat[k*size + j]);
       }
     }
 
@@ -52,9 +68,10 @@ double* floyd_warshall(Graph G&, std::vector<std::vector<double>>& W){
     double *temp = old_mat;
     old_mat = new_mat;
     new_mat = temp;
+
   }
 
-  return new_mat;
+  return old_mat;
 }
 
 
@@ -62,21 +79,24 @@ double* floyd_warshall(Graph G&, std::vector<std::vector<double>>& W){
 int main(){
 
 
-  std::vector<std::vector<int>> Adj{ {2}, {0,2}, {3}, {1} };
-  for( std::vector<int> i : Adj )
+  std::vector<std::vector<unsigned int>> Adj{ {2}, {0,2}, {3}, {1} };
+  for( std::vector<unsigned int> i : Adj )
     for( auto j : i )
       std::cout << j << std::endl;
   
   std::vector<std::vector<double>> Weights{ {-2.0}, {4.0,3.0}, {2.0}, {-1.0} };
 
+std::cout << "MIN(1,2) " << MIN(1,2) << std::endl;
 
   Graph g{Adj};
   g.print();
 
   double *fw = new double[g.size()*g.size()];
 
-  std::cout << "Finale matrix" << std::endl;
-  print_mat(fw);
+  fw = floyd_warshall(g, Weights);
+
+  std::cout << "\n\nFinal matrix" << std::endl;
+  print_mat(fw, g.size() );
   
   return 0;
 }

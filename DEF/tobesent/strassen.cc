@@ -31,18 +31,6 @@ void naive_mat_mult( T* A, T* B, T* C, const size_t size){
 
 
 
-template<typename T>
-void compare(T* A, T* B, const size_t size){
-  size_t i,j;
-  
-  for( i=0; i<size; i++)
-    for( j=0; j<size; j++)
-      if( double(A[i*size + j] - B[i*size + j])*(A[i*size + j] - B[i*size + j]) > 0.0001 )
-	std::cout << "diff: " << i << "\t" << j << std::endl;
-
-}
-
-
 size_t next_pow_two(size_t n){
 	size_t r=1;
 	while( r<n )
@@ -82,6 +70,9 @@ template<typename T>
 void Strassen_real(T*, T*, T*, const size_t);
 
 
+
+
+
 template<typename T>
 void Strassen(T* A, T* B, T* C, const size_t size_in){
 
@@ -99,17 +90,8 @@ void Strassen(T* A, T* B, T* C, const size_t size_in){
 	C_resized = resize_matrix( C, size_in, new_size );
 	
 	
-	std::cout << "matrices before" << std::endl;
-	print_mat(A_resized, new_size);
-	print_mat(B_resized, new_size);
-	print_mat(C_resized, new_size);
-	
 	Strassen_real(A_resized, B_resized, C_resized, new_size);
 	
-	std::cout << "matrices after" << std::endl;
-	print_mat(A_resized, new_size);
-	print_mat(B_resized, new_size);
-	print_mat(C_resized, new_size);
 	
 	delete[] A_resized;
 	delete[] B_resized;

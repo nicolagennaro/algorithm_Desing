@@ -40,18 +40,43 @@ class BinaryHeap{
 		
 		// 
 		void heapify( size_t i ){
-
+			/*
 			do{
 				size_t min_son_id = left_son(i);
 				if( min_son_id >= num_of_elem ){
 					return;
 					}
-
-				if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) < 0){
+					
+				if( (right_son(i) <= num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) < 0){
 					min_son_id = right_son(i);
 					}
-
+				if( Comparator<T>::CMP(container[i], container[min_son_id] ) > 0){
+					swap(i, min_son_id);
+				}
+				else
+					return;
+				
+				i = min_son_id;
+			
+			}while( true );
+			*/
+			do{
+				size_t min_son_id = left_son(i);
+				if( min_son_id >= num_of_elem ){
+					return;
+					}
+				
+				//std::cout << "cont[ " << i << " ] = " << container[i] << std::endl; 
+				
+				// if container[ left_son ] < container[right_son]
+				// if container[min_son_id] < container[right_son]
+				if( (right_son(i) < num_of_elem) && Comparator<T>::CMP(container[min_son_id], container[right_son(i)] ) < 0){
+					//std::cout << "here" << std::endl;
+					min_son_id = right_son(i);
+					}
+				// if container[min_son_id] < container[i] 
 				if( Comparator<T>::CMP(container[i], container[min_son_id] ) < 0){
+					//std::cout << "swap " << container[i] << " " << container[min_son_id] << std::endl;
 					swap(i, min_son_id);
 				}
 				else
@@ -63,17 +88,24 @@ class BinaryHeap{
 		}
 		
 		void build_heap(){
+			// original for( size_t i = num_of_elem/2; i>0; i--)
 			for( size_t i = num_of_elem/2; i>0; i--){
+				//std::cout << "heapify " << i << std::endl;
 				heapify(i);
 				}
+			//std::cout << "build_heap " << num_of_elem << std::endl;
 			if( num_of_elem > 0 ){
+				//std::cout << "heapify " << "0" << std::endl;
 				heapify(0);
 				}
 		}
 		
 		void fix_heap( size_t i ){
 			size_t father_id = father(i);
+			std::cout << "fix on " << i << std::endl;
 			while( (i != 0) && (Comparator<T>::CMP(container[i], container[father_id]) > 0) ){
+				std::cout << "swap " << i << " " << father_id << std::endl;
+				//swap( container[i], container[father_id] );
 				swap(i, father_id);
 				i = father_id;
 				father_id = father(i);
@@ -84,18 +116,18 @@ class BinaryHeap{
 		// std::allocator is the standard allocator for all types
 		template< template<typename, typename> class C >
 		void copy_in_heap( const C<T, std::allocator<T>> & cont){
-			num_of_elem = 0;
+			num_of_elem = cont.size();
 			max_size = cont.size();
 			this->container = new T[max_size];
 			// std::cout << " copy in heap " << cont[0].node <<  std::endl;
-			for( typename C<T, std::allocator<T>>::const_iterator it = std::cbegin(cont); it != std::cend(cont); ++it)
-				this->container[ num_of_elem++ ] = *it;
-			/*
+			//for( typename C<T, std::allocator<T>>::const_iterator it = std::cbegin(cont); it != std::cend(cont); ++it)
+			//	this->container[ num_of_elem++ ] = *it;
 			for( unsigned int i=0; i<cont.size(); i++){
 				this->container[i] = cont[i];
 				// std::cout << "copi " << cont[i].node << std::endl; 
 				}
-			*/
+			std::cout << " copy in heap " << num_of_elem << std::endl;
+			std::cout << " copy in heap " << container[0] << std::endl;
 		}
 
 
@@ -128,8 +160,9 @@ class BinaryHeap{
 			return container[0];
 		}
 		
-		// returns and delete the first element of the Heap 
+		// delete the first element of the Heap 
 		const T& delete_root(){
+			// T el = container[0];
 			swap(0, num_of_elem-1);
 			num_of_elem--;
 			heapify(0);
@@ -141,7 +174,9 @@ class BinaryHeap{
 				return;
 				// throw //exception;
 			}
+			//std::cout << " changing " << container[i] << " in "  << value << std::endl;
 			container[i] = value;
+			//std::cout << container[i] << std::endl;
 			fix_heap(i);
 		}
 		
@@ -162,6 +197,7 @@ class BinaryHeap{
 			num_of_elem = other.num_of_elem;
 			max_size = other.max_size;
 			container = new T[max_size];
+			// std::copy(other.container,other.container + other.size(), container )
 			for( size_t i=0; i<other.size(); i++)
 				container[i] = other.container[i];
 			return *this;
@@ -202,16 +238,17 @@ class AssociativeBinaryHeap: public BinaryHeap<T, Comparator>{
 		// BinaryHeap
 		template< template<typename, typename> class C >
 		AssociativeBinaryHeap( const C<T, std::allocator<T>>& cont ): BinaryHeap<T, Comparator> {cont}, MAP{NULL} {
-
+			std::cout << "first el " << cont[0].distance << std::endl;
+			std::cout << "first el " << cont[1].node << std::endl;
 			// this->copy_in_heap( cont );
 			this->num_of_elem = cont.size();
 			this->max_size = cont.size();
 			this->container = new T[this->max_size];
 			for( unsigned int i=0; i<cont.size(); i++){
-				//std::cout << "copi " << this->container[i].node << std::endl; 
+				std::cout << "copi " << this->container[i].node << std::endl; 
 				this->container[i] = cont[i];
-				//std::cout << "after copi " << this->container[i].node << std::endl; 
-				//std::cout << "copi " << cont[i].node << std::endl; 
+				std::cout << "after copi " << this->container[i].node << std::endl; 
+				std::cout << "copi " << cont[i].node << std::endl; 
 				}
 			MAP = new size_t[this->max_size];
 			// maps the nodes of the graph to the nodes in the heap, we use integer numbers
