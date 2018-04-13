@@ -115,23 +115,33 @@ class BinaryHeap{
 		// this method copy a generic std container in the heap data structure called container
 		// std::allocator is the standard allocator for all types
 		template< template<typename, typename> class C >
-		void copy_in_heap( const C<T, std::allocator<T>> & container){
-			num_of_elem = 0;
-			max_size = container.size();
+		void copy_in_heap( const C<T, std::allocator<T>> & cont){
+			num_of_elem = cont.size();
+			max_size = cont.size();
 			this->container = new T[max_size];
-			for( typename C<T, std::allocator<T>>::const_iterator it = std::cbegin(container); it != std::cend(container); ++it)
-				this->container[ num_of_elem++ ] = *it;
+			// std::cout << " copy in heap " << cont[0].node <<  std::endl;
+			//for( typename C<T, std::allocator<T>>::const_iterator it = std::cbegin(cont); it != std::cend(cont); ++it)
+			//	this->container[ num_of_elem++ ] = *it;
+			for( unsigned int i=0; i<cont.size(); i++){
+				this->container[i] = cont[i];
+				// std::cout << "copi " << cont[i].node << std::endl; 
+				}
+			std::cout << " copy in heap " << num_of_elem << std::endl;
+			std::cout << " copy in heap " << container[0] << std::endl;
 		}
 
 
 	public:
 		template< template<typename, typename> class C >
-		BinaryHeap( const C<T, std::allocator<T>> & container ){
+		BinaryHeap( const C<T,std::allocator<T>>& container ){
+			std::cout << "coping container" << std::endl;
 			copy_in_heap(container);
 			build_heap();
 		}
 		
-		BinaryHeap(): container{nullptr}, max_size{0}, num_of_elem{0} {}
+		BinaryHeap(): container{nullptr}, max_size{0}, num_of_elem{0} {
+			std::cout << "BinHeap" << std::endl;
+		}
 		
 		virtual ~BinaryHeap() { delete[] container; }
 		
@@ -164,7 +174,7 @@ class BinaryHeap{
 				return;
 				// throw //exception;
 			}
-			std::cout << " changing " << container[i] << " in "  << value << std::endl;
+			//std::cout << " changing " << container[i] << " in "  << value << std::endl;
 			container[i] = value;
 			//std::cout << container[i] << std::endl;
 			fix_heap(i);
@@ -227,8 +237,19 @@ class AssociativeBinaryHeap: public BinaryHeap<T, Comparator>{
 		// some compilers complains if we don't create the base class before using its methods, that's why
 		// BinaryHeap
 		template< template<typename, typename> class C >
-		AssociativeBinaryHeap( const C<T, std::allocator<T>>& cont ): BinaryHeap<T, Comparator> {}, MAP{NULL} {
-			this->copy_in_heap( cont );
+		AssociativeBinaryHeap( const C<T, std::allocator<T>>& cont ): BinaryHeap<T, Comparator> {cont}, MAP{NULL} {
+			std::cout << "first el " << cont[0].distance << std::endl;
+			std::cout << "first el " << cont[1].node << std::endl;
+			// this->copy_in_heap( cont );
+			this->num_of_elem = cont.size();
+			this->max_size = cont.size();
+			this->container = new T[this->max_size];
+			for( unsigned int i=0; i<cont.size(); i++){
+				std::cout << "copi " << this->container[i].node << std::endl; 
+				this->container[i] = cont[i];
+				std::cout << "after copi " << this->container[i].node << std::endl; 
+				std::cout << "copi " << cont[i].node << std::endl; 
+				}
 			MAP = new size_t[this->max_size];
 			// maps the nodes of the graph to the nodes in the heap, we use integer numbers
 			for( size_t i=0; i<this->max_size; i++)
@@ -273,36 +294,8 @@ class AssociativeBinaryHeap: public BinaryHeap<T, Comparator>{
 
 
 
-template<typename T>
-class MyValueComparator{
-public:
-  static int CMP(const T& a, const T& b){
-    if( b>a ) return 1;
-    else if( a>b ) return -1;
-    else return 0;
-  }
-};
 
-
-class NodeAndDistance{
-	public:
-		size_t node;
-		double distance;
-		
-		NodeAndDistance() {};
-		NodeAndDistance(const size_t n, const double d): node{n}, distance{d} {}
-		
-		friend std::ostream& operator<<(std::ostream& os, NodeAndDistance& nd){
-			os << "Node " << nd.node << " distance " << nd.distance << std::endl;
-			return os;
-		}
-		
-		bool operator<( const NodeAndDistance& other ) const { return distance < other.distance; }
-		bool operator>( const NodeAndDistance& other ) const { return distance > other.distance; }
-		bool operator=( const NodeAndDistance& other ) const { return !(distance < other.distance) && !(distance > other.distance); }
-		
-};
-
+/*
 template<typename T>
 class NodeAndDistanceComparator{
 	public:
@@ -310,7 +303,7 @@ class NodeAndDistanceComparator{
 			return MyValueComparator<double>::CMP(a.distance, b.distance);
 		}
 };
-
+*/
 
 
 #endif
