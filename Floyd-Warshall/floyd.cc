@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <limits>
+
 
 
 #define MIN(X,Y) (((X)<(Y)) ? (X) : (Y))
@@ -33,6 +35,8 @@ double* weight_matrix(Graph& G, std::vector<std::vector<double>>& W){
     	else
       		adj_mat[i*size + j] = INFINITY;
     }
+    
+  
 
   for(unsigned int i=0; i<G.size(); i++)
     for(unsigned int j=0; j<G.Adj[i].size(); j++)
@@ -40,6 +44,9 @@ double* weight_matrix(Graph& G, std::vector<std::vector<double>>& W){
 
   return adj_mat;
 }
+
+
+
 
 
 double* floyd_warshall(Graph& G, std::vector<std::vector<double>>& W){
@@ -53,21 +60,54 @@ double* floyd_warshall(Graph& G, std::vector<std::vector<double>>& W){
   std::cout << "\nWeight matrix\n" << std::endl;
   print_mat(old_mat, size);
   
+  unsigned int *pi_old, *pi_new;
+  
+  pi_old = G.adj_matrix();
+  
+  std::cout << "\nAdj matrix\n" << std::endl;
+  print_mat(pi_old, size);
+ 
+  for( unsigned int i=0; i<size; i++ ){
+  	for(unsigned int j=0; j<size; j++){
+  		if( i==j || pi_old[ i*size + j ] == 0 )
+  			pi_old[ i*size + j ] = std::numeric_limits<unsigned int>::max();
+  		else
+  			pi_old[ i*size + j ] = i;
+  	}
+  }
+
+  std::cout << "\nPI_0  matrix\n" << std::endl;
+  print_mat(pi_old, size);
+
+
   new_mat = new double[size*size];
+  pi_new = new unsigned int[size*size];
+
 
   for(unsigned int k=0; k<size; k++){
     for(unsigned int i=0; i<size; i++){
       for(unsigned int j=0; j<size; j++){
-	new_mat[i*size + j] = MIN(old_mat[i*size + j], old_mat[i*size + k] + old_mat[k*size + j]);
+	// new_mat[i*size + j] = MIN(old_mat[i*size + j], old_mat[i*size + k] + old_mat[k*size + j]);
+	if( old_mat[i*size + j] >  old_mat[i*size + k] + old_mat[k*size + j] ){
+		new_mat[ i*size + j ] = old_mat[i*size + k] + old_mat[k*size + j];
+		pi_new[ i*size + j ] = pi_old[ k*size + j ];
+	}
       }
     }
 
     std::cout << "\nstep " << k << "\nNEW MATRIX\n" << std::endl;
     print_mat(new_mat, size);
     
+    std::cout << "\nNEW PI\n" << std::endl;
+    print_mat(pi_new, size);
+    
     double *temp = old_mat;
     old_mat = new_mat;
     new_mat = temp;
+    
+    unsigned int *tmp = pi_old;
+    pi_old = pi_new;
+    pi_new = tmp;
 
   }
 

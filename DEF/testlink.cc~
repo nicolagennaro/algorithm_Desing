@@ -1,0 +1,12 @@
+#include <iostream>
+#include <LinkedList.h>
+
+
+int main(){
+
+  LinkedList<int> ll;
+
+  ll.push_back(3);
+
+  return 0;
+}

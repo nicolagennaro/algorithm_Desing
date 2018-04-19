@@ -1,0 +1,9 @@
+#ifndef __MYSTACK__
+#define __MYSTACK__
+
+template<typename T>
+class Stack{
+  
+};
+
+#endif // __MYSTACK__

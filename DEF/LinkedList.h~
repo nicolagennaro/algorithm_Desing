@@ -1,0 +1,16 @@
+#ifndef __LINKLIST__
+#define __LINKLIST__
+
+
+template<typename T>
+class LinkedList{
+  struct Node{
+    T elem;
+    Node* next;
+
+  Node( const T e, const Node* pt ): elem{e}, next{pt} {}
+  }; // node
+  
+}; // linkedlist
+
+#endif // __LINKLIST__

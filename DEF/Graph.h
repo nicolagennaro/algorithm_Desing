@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <limits>
 
 enum class color{white, grey, black};
 
@@ -43,7 +44,25 @@ class Graph{
 	  }
 	}
 	
+	unsigned int *adj_matrix() const;
+	
 };
+
+unsigned int* Graph::adj_matrix() const{
+	size_t size = this->size();
+	unsigned int *adj_mat = new unsigned int[size*size];
+	
+	for( size_t i=0; i<size; i++)
+		for( size_t j=0; j<size; j++)
+			adj_mat[ i*size + j ] = 0;
+
+	for( size_t i=0; i<Adj.size(); i++ ){
+		for( size_t j=0; j<Adj[i].size(); j++ )
+			adj_mat[ i*size + Adj[i][j] ] = 1;
+	}
+	
+	return adj_mat;
+}
 
 
 #endif // __GRAPH__
