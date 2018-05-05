@@ -5,6 +5,9 @@
 
 template<typename T>
 class LinkedList{
+
+ protected:
+ 
   struct Node{
     T elem;
     std::unique_ptr<Node> next;
@@ -12,21 +15,23 @@ class LinkedList{
   Node( const T e ): elem{e}, next{nullptr} {}
   }; // node
 
+
   std::unique_ptr<Node> start;
+  Node* _end;
   size_t _size;
 
  public:
 
- LinkedList(): _size{0}, start{nullptr} { std::cout << "LL()" << std::endl; }
+ LinkedList(): start{nullptr}, _end{nullptr}, _size{0} {}
 
  LinkedList( const T e ): start{ new Node{e} }, _size{1} {
-    std::cout << "LL(const)"<< std::endl;
-  }
+ 	_end = start.get();
+ }
 
-  ~LinkedList() { }
+ ~LinkedList() { }
 
 
- LinkedList(const LinkedList& ll): _size{ll._size}{
+ LinkedList(const LinkedList& ll){
     LinkedList<T>::ConstIterator it = ll.cbegin();
     for( ; it != ll.cend(); ++it)
       this->push_back( *it );
@@ -40,16 +45,14 @@ class LinkedList{
   }
   
   void push_back( const T e ){
-    Node* pt = start.get();
-    std::cout << "LL(const)"<< std::endl;
-    if( pt == nullptr ){
+    if( _end == nullptr ){
     	start.reset( new Node{e} );
+    	_end = start.get();
     	return;
     }
-    	
-    while( pt->next != nullptr )
-      pt = pt->next.get();
-    pt->next.reset( new Node{e} );
+    
+    _end->next.reset( new Node{e} );
+    _end = _end->next.get();
     _size++;
   }
   
@@ -58,8 +61,8 @@ class LinkedList{
   class Iterator;
   class ConstIterator;
   
-  Iterator begin(){ return Iterator{start.get()}; }
-  Iterator end(){ return Iterator{nullptr}; }
+  Iterator begin() const { return Iterator{start.get()}; }
+  Iterator end() const { return Iterator{nullptr}; }
 
   ConstIterator cbegin() const { return ConstIterator{start.get()}; }
   ConstIterator cend() const { return ConstIterator{nullptr}; }
