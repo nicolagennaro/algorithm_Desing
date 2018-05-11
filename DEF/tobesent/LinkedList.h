@@ -17,11 +17,9 @@ class LinkedList{
 
  public:
 
- LinkedList(): _size{0}, start{nullptr} { std::cout << "LL()" << std::endl; }
+ LinkedList(): _size{0}, start{nullptr} { }
 
- LinkedList( const T e ): start{ new Node{e} }, _size{1} {
-    std::cout << "LL(const)"<< std::endl;
-  }
+ LinkedList( const T e ): start{ new Node{e} }, _size{1} { }
 
   ~LinkedList() { }
 
@@ -41,7 +39,6 @@ class LinkedList{
   
   void push_back( const T e ){
     Node* pt = start.get();
-    std::cout << "LL(const)"<< std::endl;
     if( pt == nullptr ){
     	start.reset( new Node{e} );
 	_size++;

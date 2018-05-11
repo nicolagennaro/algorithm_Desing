@@ -1,9 +1,6 @@
 #ifndef __MYQUEUE__
 #define __MYQUEUE__
 
-// #define MAX_STACK 100
-
-// #include <memory>
 #include <iostream>
 
 template<typename T>

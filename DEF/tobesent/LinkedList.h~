@@ -44,7 +44,6 @@ class LinkedList{
     std::cout << "LL(const)"<< std::endl;
     if( pt == nullptr ){
     	start.reset( new Node{e} );
-	_size++;
     	return;
     }
     	

@@ -63,34 +63,43 @@ size_t* compute_Z(char* P, size_t lP){
   
   size_t j=2;
   size_t i=3;
-  size_t k=1;
+  size_t k=0;
 
   Z[1] = 0; // or the whole string ????
   // Z[2] = 0;
 
+
   while( S[k] == S[k+1] && k<lP )
     k++;
   
-  Z[2] = k;
+  Z[2] = 0;
 
   std::cout << "Z2: " << Z[2] << std::endl;
   
   while( i<lP ){
+    std::cout << "i: " << i  << std::endl;
     if( i >= j+Z[j] ){
+      std::cout << "i >= j+Z[j]" << std::endl;
+      std::cout << "j " << j << " Zj " << Z[j] << std::endl;
       // compute Z[i] explicitely
-      k=1;
-      while( S[k] == S[k+i-1] )
+      k=0;
+      while( S[k+1] == S[k+i] && k+i<=lP )
 	k++;
+      
+      std::cout << "k" << k << std::endl;
       Z[i] = k;
     }
     else{
+      std::cout << "i < j+Z[j]" << std::endl;
+      std::cout << "j " << j << " Zj " << Z[j] << std::endl;
       Z[i] = Z[ i-j+1 ];
       if( Z[i] >= Z[j] -(i-j) ){
-	// extend the tail of Z[i]
-	k=1;
-	while( S[ Z[j] + k ] == S[ Z[i] + k ] )
+	std::cout << "Z[i] >= Z[j] -(i-j)" << std::endl;
+	std::cout << " extend the tail of Z[i]" << std::endl;
+	k=0;
+	while( S[ Z[j] + k ] == S[ Z[i] + k ] && (Z[i] + k) <= lP )
 	  k++;
-       Z[i] += k;
+        Z[i] += k;
       }
     }
 
@@ -170,7 +179,7 @@ LinkedList<size_t> Boyer_Moore(char* T, size_t lT, char* P, size_t lP, char *alp
   for( size_t i=1; i<=lP; i++)
     N[i] = Z[lP - i + 1];
 
-  delete[] Z;
+  delete[] (Z+1);
   std::cout << "N" << std::endl;
 
   for(size_t i=1; i<=lP; i++)

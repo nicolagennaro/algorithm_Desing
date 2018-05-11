@@ -55,7 +55,7 @@ class LinkedList<size_t> KMP(char* T, char* P, size_t lT, size_t lP){
       ll.push_back(s-i);
   }
   
-  delete[] pi+1;
+  delete[] (pi+1);
   return ll;
 }
 
