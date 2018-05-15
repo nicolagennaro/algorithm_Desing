@@ -63,24 +63,24 @@ size_t* compute_Z(char* P, size_t lP){
   
   size_t j=2;
   size_t i=3;
-  size_t k=0;
+  size_t k;
 
-  Z[1] = 0; // or the whole string ????
+  Z[1] = lP; // or the whole string ????
   // Z[2] = 0;
 
-
-  while( S[k] == S[k+1] && k<lP )
+  k = 0;
+  while( S[ k+2 ] == S[ k+1 ] && k<lP )
     k++;
   
-  Z[2] = 0;
+  Z[2] = k;
 
   std::cout << "Z2: " << Z[2] << std::endl;
   
-  while( i<lP ){
-    std::cout << "i: " << i  << std::endl;
+  while( i<=lP ){
+    std::cout << "\n\ni: " << i  << std::endl;
     if( i >= j+Z[j] ){
       std::cout << "i >= j+Z[j]" << std::endl;
-      std::cout << "j " << j << " Zj " << Z[j] << std::endl;
+      std::cout << "j " << j << " ::: Zj " << Z[j] << std::endl;
       // compute Z[i] explicitely
       k=0;
       while( S[k+1] == S[k+i] && k+i<=lP )
@@ -89,23 +89,30 @@ size_t* compute_Z(char* P, size_t lP){
       std::cout << "k" << k << std::endl;
       Z[i] = k;
     }
-    else{
+    else{  // if i < j + Z[j] then there is a prefix that start at j of length Z[j] that 
+    		// goes beyond the current index i. So we can start from the position at
+    		// j + Z[j] knowing that Z[j] chars are already equal
       std::cout << "i < j+Z[j]" << std::endl;
-      std::cout << "j " << j << " Zj " << Z[j] << std::endl;
+      std::cout << "j " << j << " ::: Zj " << Z[j] << std::endl;
       Z[i] = Z[ i-j+1 ];
       if( Z[i] >= Z[j] -(i-j) ){
 	std::cout << "Z[i] >= Z[j] -(i-j)" << std::endl;
 	std::cout << " extend the tail of Z[i]" << std::endl;
-	k=0;
-	while( S[ Z[j] + k ] == S[ Z[i] + k ] && (Z[i] + k) <= lP )
+	k=Z[j] + j - i + 1;
+	while( S[ k ] == S[ i+ k ] && (i + k) <= lP )
 	  k++;
-        Z[i] += k;
+	std::cout << "k " << k << std::endl;
+	std::cout << "j " << j << std::endl;
+	Z[i] = k - (i-j);
+	// Z[i] = k;
+        std::cout << "Z[i] " << Z[i] << std::endl;
       }
     }
 
-    if( j+Z[j] < i+Z[i] )
-      j = i;
-
+    if( j+Z[j] < i+Z[i] ){
+    	std::cout << "j+Z[j] < i+Z[i]" << std::endl;
+      	j = i;
+    }
     i++;
   }
 
